@@ -104,3 +104,29 @@ button.opt:disabled > .opt__mark, button.opt:disabled > .opt__text { opacity: .3
 .panel__actions .btn { align-self: auto; margin-top: 0; }
 .panel .note + .panel__actions { margin-top: 0; }
 .start { padding-bottom: clamp(56px, 8vw, 112px); }
+
+/* Section screens */
+.key { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--s-6); margin-bottom: var(--s-6); border-top: 1px solid var(--line); }
+.key > div { display: grid; grid-template-columns: 148px minmax(0, 1fr); gap: var(--s-3); padding: var(--s-3) 0; border-bottom: 1px solid var(--line); font-size: 14px; line-height: 1.4; }
+.key dt { font-weight: 500; }
+.key dd { color: var(--ink-2); }
+.gridq tr.is-missing > th { color: var(--accent); }
+.jobcards { display: none; }
+.jobcards .opt__text b { font-weight: 500; }
+.jobcards .opt__text .small { display: block; }
+.jobcards .card.is-missing { border-color: var(--accent); z-index: 1; position: relative; }
+@media (max-width: 900px) {
+  .key { grid-template-columns: 1fr; }
+  .gridq--jobs { display: none; }
+  .jobcards { display: block; }
+}
+/* Beyond the brief's rules for the section screens, each needed for what the screens showed in the browser:
+   a job's question of the right amount of AI that is still open when Continue is refused is marked as a job row is;
+   the eight ways of doing a job share the width the job column leaves, (100% - 36%) / 8 each, so every way is
+   the same size and the marks sit at equal intervals, where the table's own sizing made one column twice another;
+   the second row's label keeps the table's cell padding from the hairline above it, where it sat almost on the line;
+   a part brought into view when Continue is refused clears the top bar, so a tall card shows its job. */
+.gridq__sub.is-missing .label, .jobcards .is-missing > .label { color: var(--accent); }
+.gridq--jobs thead th { width: 8%; }
+.gridq__sub > td { padding-top: var(--s-3); }
+[data-key] { scroll-margin-top: var(--s-9); }

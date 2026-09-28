@@ -8,13 +8,25 @@ import * as welcome from './screens/welcome.js';
 import * as intro from './screens/intro.js';
 import * as questions from './screens/questions.js';
 import * as screener from './screens/screener.js';
+import * as jobs from './screens/jobs.js';
+import * as back from './screens/back.js';
+import * as result from './screens/result.js';
+import * as prompt from './screens/prompt.js';
 import * as end from './screens/end.js';
 
 // The module for each kind of screen. A later task adds a kind with one module and one line here.
-const SCREENS = { welcome, intro, questions, screener, end };
+const SCREENS = { welcome, intro, questions, screener, jobs, back, result, prompt, end };
 // Screens that only inform are complete once the person continues past them.
 const DONE_ON_CONTINUE = ['welcome', 'intro', 'end'];
 const WIDE = '(min-width: 1024px)';
+// What the navigation row says when Continue is refused, by kind of screen.
+const REFUSED = {
+  screener: 'Mark at least one part to continue.',
+  jobs: 'Answer for every job to continue.',
+  prompt: 'Write a few sentences to continue.',
+  tools: 'Answer for every tool to continue.'
+};
+const REFUSED_OTHER = 'Answer or skip the marked questions to continue.';
 
 // A kind of screen with no module yet: its title and a note, and Continue lets the person pass.
 const unbuilt = {
@@ -51,7 +63,7 @@ export function createApp({ root, instrument, store, config }) {
 
   app.flow = buildFlow(instrument, store.state, config);
   const saved = app.flow.findIndex((screen) => screen.id === store.state.position);
-  const first = firstIncomplete(instrument, app.flow, store.state);
+  const first = firstIncomplete(instrument, app.flow, store.state, options);
   moveTo(saved !== -1 && saved <= first ? saved : first);
   return app;
 
@@ -84,7 +96,7 @@ export function createApp({ root, instrument, store, config }) {
 
   // Moves to a screen at or before the first one that is not complete.
   function go(index) {
-    if (index >= 0 && index <= firstIncomplete(instrument, app.flow, store.state)) moveTo(index);
+    if (index >= 0 && index <= firstIncomplete(instrument, app.flow, store.state, options)) moveTo(index);
   }
 
   function goTo(screenId) {
@@ -92,7 +104,7 @@ export function createApp({ root, instrument, store, config }) {
   }
 
   // Called after any answer changes. Rebuilds the flow and keeps the screen in place without redrawing it,
-  // so that fields keep their state; only the rail, the time left and the bar are redrawn.
+  // so that fields keep their state; only the rail, the time left, the bar and any marks are redrawn.
   // A screen that has left the flow gives way to whatever screen now sits at its place.
   function changed() {
     const id = app.screen.id;
@@ -105,6 +117,7 @@ export function createApp({ root, instrument, store, config }) {
     app.index = index;
     app.screen = app.flow[index];
     drawProgress();
+    clearMarks();
   }
 
   function moveTo(index) {
@@ -121,14 +134,31 @@ export function createApp({ root, instrument, store, config }) {
     view.querySelector('.screen__title')?.focus({ preventScroll: true });
   }
 
-  // Marks each field that still stops the screen, says so in the navigation row, and brings the first into view.
+  // Marks each part of the screen that still stops it, says so in the navigation row, and brings the first into view.
+  // A part is anything that carries its answer key: a field, or a job's row or card. The first part brought into view
+  // is one that is drawn, since the jobs table and its cards carry the same keys and only one of them shows.
+  // A part taller than half the window is brought in from its top, so that its question or job shows.
   function showMissing(keys) {
-    const fields = [...main.querySelectorAll('.field[data-key]')];
-    for (const field of fields) field.classList.toggle('is-missing', keys.includes(field.dataset.key));
+    const parts = [...main.querySelectorAll('[data-key]')];
+    for (const part of parts) part.classList.toggle('is-missing', keys.includes(part.dataset.key));
     const nav = main.querySelector('.screen__nav');
     nav.querySelector('.error')?.remove();
-    nav.append(h('p', { class: 'error', role: 'alert' }, 'Answer or skip the marked questions to continue.'));
-    fields.find((field) => keys.includes(field.dataset.key))?.scrollIntoView({ block: 'center' });
+    nav.append(h('p', { class: 'error', role: 'alert' }, REFUSED[app.screen.kind] ?? REFUSED_OTHER));
+    const first = parts.find((part) => keys.includes(part.dataset.key) && part.getClientRects().length > 0);
+    first?.scrollIntoView({ block: first.offsetHeight > window.innerHeight / 2 ? 'start' : 'center' });
+  }
+
+  // After a refused Continue, each mark clears once its answer comes in, and the message goes once nothing is missing.
+  // New marks appear only when Continue is pressed.
+  function clearMarks() {
+    const marked = [...main.querySelectorAll('[data-key].is-missing')];
+    const message = main.querySelector('.screen__nav .error');
+    if (marked.length === 0 && !message) return;
+    const open = missing(instrument, app.screen, store.state, options);
+    for (const part of marked) {
+      if (!open.includes(part.dataset.key)) part.classList.remove('is-missing');
+    }
+    if (open.length === 0) message?.remove();
   }
 
   // The time left, the bar and the rail, from which screens are complete.

@@ -101,8 +101,9 @@ export function missing(instrument, screen, state, { minPromptLength = 20 } = {}
 }
 
 // The index of the first screen that is not complete, or of the last screen when every one is.
-export function firstIncomplete(instrument, flow, state) {
-  const index = flow.findIndex((screen) => !isScreenComplete(instrument, screen, state));
+// options are those of isScreenComplete.
+export function firstIncomplete(instrument, flow, state, options) {
+  const index = flow.findIndex((screen) => !isScreenComplete(instrument, screen, state, options));
   return index === -1 ? flow.length - 1 : index;
 }
 

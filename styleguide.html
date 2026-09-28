@@ -373,6 +373,228 @@ main > section { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr
   <hr class="rule">
 
   <section>
+    <h2 class="label">How the work gets done</h2>
+    <div>
+      <dl class="key">
+        <div><dt>Not done</dt><dd>We do not do this</dd></div>
+        <div><dt>By hand</dt><dd>By hand, in general office tools</dd></div>
+        <div><dt>In a tool</dt><dd>In a specialist tool, with people driving every step</dd></div>
+        <div><dt>AI helps</dt><dd>People drive, and AI helps on some steps when they choose</dd></div>
+        <div><dt>AI first, people approve</dt><dd>AI does the first pass as the standard way, and people review and approve</dd></div>
+        <div><dt>AI end to end</dt><dd>AI runs it end to end within limits we set, and people handle exceptions</dd></div>
+      </dl>
+      <table class="gridq gridq--jobs" aria-label="For each job, how does it get done today?">
+        <thead>
+          <tr>
+            <td></td>
+            <th scope="col">Not done</th>
+            <th scope="col">By hand</th>
+            <th scope="col">In a tool</th>
+            <th scope="col">AI helps</th>
+            <th scope="col">AI first, people approve</th>
+            <th scope="col">AI end to end</th>
+            <th scope="col" class="col-optout">Not relevant</th>
+            <th scope="col">I do not know</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" id="sg-work-job-1">Decide what content to make (the content calendar)</th>
+            <td><label><input class="opt__input" type="radio" name="sg-work-1" value="1" aria-label="We do not do this" aria-describedby="sg-work-job-1"><span class="opt__mark"></span></label></td>
+            <td><label><input class="opt__input" type="radio" name="sg-work-1" value="2" aria-label="By hand, in general office tools" aria-describedby="sg-work-job-1"><span class="opt__mark"></span></label></td>
+            <td><label><input class="opt__input" type="radio" name="sg-work-1" value="3" aria-label="In a specialist tool, with people driving every step" aria-describedby="sg-work-job-1"><span class="opt__mark"></span></label></td>
+            <td><label><input class="opt__input" type="radio" name="sg-work-1" value="4" checked aria-label="People drive, and AI helps on some steps when they choose" aria-describedby="sg-work-job-1"><span class="opt__mark"></span></label></td>
+            <td><label><input class="opt__input" type="radio" name="sg-work-1" value="5" aria-label="AI does the first pass as the standard way, and people review and approve" aria-describedby="sg-work-job-1"><span class="opt__mark"></span></label></td>
+            <td><label><input class="opt__input" type="radio" name="sg-work-1" value="6" aria-label="AI runs it end to end within limits we set, and people handle exceptions" aria-describedby="sg-work-job-1"><span class="opt__mark"></span></label></td>
+            <td class="col-optout"><label><input class="opt__input" type="radio" name="sg-work-1" value="7" aria-label="Not relevant to our business" aria-describedby="sg-work-job-1"><span class="opt__mark"></span></label></td>
+            <td><label><input class="opt__input" type="radio" name="sg-work-1" value="8" aria-label="I do not know" aria-describedby="sg-work-job-1"><span class="opt__mark"></span></label></td>
+          </tr>
+          <tr class="gridq__sub">
+            <td colspan="9">
+              <p class="label">Is that the right amount of AI for this job?</p>
+              <div class="seg" role="radiogroup" aria-label="Is that the right amount of AI for this job?" aria-describedby="sg-work-job-1">
+                <label class="seg__item"><input type="radio" name="sg-work-fit-1" value="1"><span>We should use less</span></label>
+                <label class="seg__item"><input type="radio" name="sg-work-fit-1" value="2" checked><span>It is about right</span></label>
+                <label class="seg__item"><input type="radio" name="sg-work-fit-1" value="3"><span>We should use more</span></label>
+                <label class="seg__item seg__item--optout"><input type="radio" name="sg-work-fit-1" value="4"><span>I am not sure</span></label>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" id="sg-work-job-2">Write long-form content (articles, guides, reports)</th>
+            <td><label><input class="opt__input" type="radio" name="sg-work-2" value="1" checked aria-label="We do not do this" aria-describedby="sg-work-job-2"><span class="opt__mark"></span></label></td>
+            <td><label><input class="opt__input" type="radio" name="sg-work-2" value="2" aria-label="By hand, in general office tools" aria-describedby="sg-work-job-2"><span class="opt__mark"></span></label></td>
+            <td><label><input class="opt__input" type="radio" name="sg-work-2" value="3" aria-label="In a specialist tool, with people driving every step" aria-describedby="sg-work-job-2"><span class="opt__mark"></span></label></td>
+            <td><label><input class="opt__input" type="radio" name="sg-work-2" value="4" aria-label="People drive, and AI helps on some steps when they choose" aria-describedby="sg-work-job-2"><span class="opt__mark"></span></label></td>
+            <td><label><input class="opt__input" type="radio" name="sg-work-2" value="5" aria-label="AI does the first pass as the standard way, and people review and approve" aria-describedby="sg-work-job-2"><span class="opt__mark"></span></label></td>
+            <td><label><input class="opt__input" type="radio" name="sg-work-2" value="6" aria-label="AI runs it end to end within limits we set, and people handle exceptions" aria-describedby="sg-work-job-2"><span class="opt__mark"></span></label></td>
+            <td class="col-optout"><label><input class="opt__input" type="radio" name="sg-work-2" value="7" aria-label="Not relevant to our business" aria-describedby="sg-work-job-2"><span class="opt__mark"></span></label></td>
+            <td><label><input class="opt__input" type="radio" name="sg-work-2" value="8" aria-label="I do not know" aria-describedby="sg-work-job-2"><span class="opt__mark"></span></label></td>
+          </tr>
+          <tr>
+            <th scope="row" id="sg-work-job-3">Write short copy (ads, emails, social posts, notifications)</th>
+            <td><label><input class="opt__input" type="radio" name="sg-work-3" value="1" aria-label="We do not do this" aria-describedby="sg-work-job-3"><span class="opt__mark"></span></label></td>
+            <td><label><input class="opt__input" type="radio" name="sg-work-3" value="2" aria-label="By hand, in general office tools" aria-describedby="sg-work-job-3"><span class="opt__mark"></span></label></td>
+            <td><label><input class="opt__input" type="radio" name="sg-work-3" value="3" aria-label="In a specialist tool, with people driving every step" aria-describedby="sg-work-job-3"><span class="opt__mark"></span></label></td>
+            <td><label><input class="opt__input" type="radio" name="sg-work-3" value="4" aria-label="People drive, and AI helps on some steps when they choose" aria-describedby="sg-work-job-3"><span class="opt__mark"></span></label></td>
+            <td><label><input class="opt__input" type="radio" name="sg-work-3" value="5" aria-label="AI does the first pass as the standard way, and people review and approve" aria-describedby="sg-work-job-3"><span class="opt__mark"></span></label></td>
+            <td><label><input class="opt__input" type="radio" name="sg-work-3" value="6" aria-label="AI runs it end to end within limits we set, and people handle exceptions" aria-describedby="sg-work-job-3"><span class="opt__mark"></span></label></td>
+            <td class="col-optout"><label><input class="opt__input" type="radio" name="sg-work-3" value="7" aria-label="Not relevant to our business" aria-describedby="sg-work-job-3"><span class="opt__mark"></span></label></td>
+            <td><label><input class="opt__input" type="radio" name="sg-work-3" value="8" aria-label="I do not know" aria-describedby="sg-work-job-3"><span class="opt__mark"></span></label></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="jobcards">
+        <div class="card stack--4">
+          <h2 class="h3" id="sg-work-card-1">Decide what content to make (the content calendar)</h2>
+          <div class="opts" role="radiogroup" aria-labelledby="sg-work-card-1">
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-work-1-narrow" value="1">
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>Not done</b><span class="small muted">We do not do this</span></span>
+            </label>
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-work-1-narrow" value="2">
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>By hand</b><span class="small muted">By hand, in general office tools</span></span>
+            </label>
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-work-1-narrow" value="3">
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>In a tool</b><span class="small muted">In a specialist tool, with people driving every step</span></span>
+            </label>
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-work-1-narrow" value="4" checked>
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>AI helps</b><span class="small muted">People drive, and AI helps on some steps when they choose</span></span>
+            </label>
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-work-1-narrow" value="5">
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>AI first, people approve</b><span class="small muted">AI does the first pass as the standard way, and people review and approve</span></span>
+            </label>
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-work-1-narrow" value="6">
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>AI end to end</b><span class="small muted">AI runs it end to end within limits we set, and people handle exceptions</span></span>
+            </label>
+            <label class="opt opt--optout">
+              <input class="opt__input" type="radio" name="sg-work-1-narrow" value="7">
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>Not relevant</b><span class="small muted">Not relevant to our business</span></span>
+            </label>
+            <label class="opt opt--optout">
+              <input class="opt__input" type="radio" name="sg-work-1-narrow" value="8">
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>I do not know</b></span>
+            </label>
+          </div>
+          <div class="stack--2">
+            <p class="label">Is that the right amount of AI for this job?</p>
+            <div class="seg" role="radiogroup" aria-label="Is that the right amount of AI for this job?" aria-describedby="sg-work-card-1">
+              <label class="seg__item"><input type="radio" name="sg-work-fit-1-narrow" value="1"><span>We should use less</span></label>
+              <label class="seg__item"><input type="radio" name="sg-work-fit-1-narrow" value="2" checked><span>It is about right</span></label>
+              <label class="seg__item"><input type="radio" name="sg-work-fit-1-narrow" value="3"><span>We should use more</span></label>
+              <label class="seg__item seg__item--optout"><input type="radio" name="sg-work-fit-1-narrow" value="4"><span>I am not sure</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="card stack--4">
+          <h2 class="h3" id="sg-work-card-2">Write long-form content (articles, guides, reports)</h2>
+          <div class="opts" role="radiogroup" aria-labelledby="sg-work-card-2">
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-work-2-narrow" value="1" checked>
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>Not done</b><span class="small muted">We do not do this</span></span>
+            </label>
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-work-2-narrow" value="2">
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>By hand</b><span class="small muted">By hand, in general office tools</span></span>
+            </label>
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-work-2-narrow" value="3">
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>In a tool</b><span class="small muted">In a specialist tool, with people driving every step</span></span>
+            </label>
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-work-2-narrow" value="4">
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>AI helps</b><span class="small muted">People drive, and AI helps on some steps when they choose</span></span>
+            </label>
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-work-2-narrow" value="5">
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>AI first, people approve</b><span class="small muted">AI does the first pass as the standard way, and people review and approve</span></span>
+            </label>
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-work-2-narrow" value="6">
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>AI end to end</b><span class="small muted">AI runs it end to end within limits we set, and people handle exceptions</span></span>
+            </label>
+            <label class="opt opt--optout">
+              <input class="opt__input" type="radio" name="sg-work-2-narrow" value="7">
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>Not relevant</b><span class="small muted">Not relevant to our business</span></span>
+            </label>
+            <label class="opt opt--optout">
+              <input class="opt__input" type="radio" name="sg-work-2-narrow" value="8">
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>I do not know</b></span>
+            </label>
+          </div>
+        </div>
+        <div class="card stack--4">
+          <h2 class="h3" id="sg-work-card-3">Write short copy (ads, emails, social posts, notifications)</h2>
+          <div class="opts" role="radiogroup" aria-labelledby="sg-work-card-3">
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-work-3-narrow" value="1">
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>Not done</b><span class="small muted">We do not do this</span></span>
+            </label>
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-work-3-narrow" value="2">
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>By hand</b><span class="small muted">By hand, in general office tools</span></span>
+            </label>
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-work-3-narrow" value="3">
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>In a tool</b><span class="small muted">In a specialist tool, with people driving every step</span></span>
+            </label>
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-work-3-narrow" value="4">
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>AI helps</b><span class="small muted">People drive, and AI helps on some steps when they choose</span></span>
+            </label>
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-work-3-narrow" value="5">
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>AI first, people approve</b><span class="small muted">AI does the first pass as the standard way, and people review and approve</span></span>
+            </label>
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-work-3-narrow" value="6">
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>AI end to end</b><span class="small muted">AI runs it end to end within limits we set, and people handle exceptions</span></span>
+            </label>
+            <label class="opt opt--optout">
+              <input class="opt__input" type="radio" name="sg-work-3-narrow" value="7">
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>Not relevant</b><span class="small muted">Not relevant to our business</span></span>
+            </label>
+            <label class="opt opt--optout">
+              <input class="opt__input" type="radio" name="sg-work-3-narrow" value="8">
+              <span class="opt__mark"></span>
+              <span class="opt__text"><b>I do not know</b></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+  <section>
     <h2 class="label">Main choice</h2>
     <div class="field">
       <fieldset>
