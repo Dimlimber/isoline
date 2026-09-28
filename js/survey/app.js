@@ -21,6 +21,8 @@ const SCREENS = { welcome, intro, questions, screener, jobs, back, result, promp
 // Screens that only inform are complete once the person continues past them.
 const DONE_ON_CONTINUE = ['welcome', 'intro', 'end'];
 const WIDE = '(min-width: 1024px)';
+// The page's title is the screen's title, then this.
+const SITE = 'Isoline survey';
 // What the navigation row says when Continue is refused, by kind of screen.
 const REFUSED = {
   screener: 'Mark at least one part to continue.',
@@ -160,6 +162,7 @@ export function createApp({ root, instrument, store, config }) {
     leaving = [];
     app.index = index;
     app.screen = app.flow[index];
+    document.title = `${app.screen.title} · ${SITE}`;
     store.setPosition(app.screen.id);
     // Arriving at the finish sends the answers, once per set of answers, so a reload there adds nothing.
     if (app.screen.kind === 'end') sending.send('final');
@@ -228,28 +231,36 @@ export function createApp({ root, instrument, store, config }) {
   }
 
   // An item the person can go to is a button: a done item leads to its first screen, and the item that holds the first
-  // screen not yet complete leads to that screen. Items beyond it are plain text.
+  // screen not yet complete leads to that screen. Items beyond it are plain text. A done item says so in words as well.
   function railItem(item, complete, first) {
     const done = app.flow.slice(item.first, item.last + 1).every((screen) => complete[screen.id]);
     const current = app.index >= item.first && app.index <= item.last;
     const className = ['rail__item', done && 'is-done', current && 'is-current'].filter(Boolean).join(' ');
-    const content = [h('span', { class: 'rail__mark' }), item.label];
+    const content = [h('span', { class: 'rail__mark' }), item.label, done ? h('span', { class: 'visually-hidden' }, ' (done)') : null];
     const target = railTarget(item, first);
     const props = { class: className, 'aria-current': current ? 'step' : null };
     if (target === null) return h('div', props, content);
     return h('button', { ...props, type: 'button', onClick: () => go(target) }, content);
   }
 
-  // On narrow screens the rail opens over the page. While it is open the page under it cannot take focus.
+  // On narrow screens the rail opens over the page. While it is open the page under it cannot take focus, and focus
+  // moves to the rail's first button.
   function openRail(open) {
     rail.classList.toggle('is-open', open);
     main.inert = open;
     menu.textContent = open ? 'Close' : 'Sections';
     menu.setAttribute('aria-expanded', String(open));
+    if (open) rail.querySelector('button')?.focus();
   }
 
+  // Escape closes the rail opened over the page and returns focus to the button that opened it.
   // Ctrl+Enter and Cmd+Enter do the same as Continue.
   function onKey(event) {
+    if (event.key === 'Escape' && rail.classList.contains('is-open')) {
+      openRail(false);
+      menu.focus();
+      return;
+    }
     if (event.key !== 'Enter' || !(event.ctrlKey || event.metaKey) || event.isComposing) return;
     const button = main.querySelector('.screen__nav .btn--primary');
     if (!button) return;
