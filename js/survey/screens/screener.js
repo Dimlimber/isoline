@@ -43,6 +43,8 @@ export function render(screen, app) {
     summary,
     h('button', { class: 'btn btn--quiet', type: 'button', onClick: speakToAll }, 'I can speak to all of it'));
   summarize();
+  // The page keeps the bar's height, so that its scroll padding keeps whatever takes focus clear of the bar.
+  new ResizeObserver(() => document.documentElement.style.setProperty('--pick-bar', `${bar.offsetHeight}px`)).observe(bar);
 
   return frame(screen, app, {
     kicker: 'Start',

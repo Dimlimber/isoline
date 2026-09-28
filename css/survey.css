@@ -1,5 +1,9 @@
-/* --topbar is the height of the top bar with its hairline. Below 1024 px the progress bar makes it taller. */
-.shell { --topbar: 65px; min-height: 100vh; display: flex; flex-direction: column; }
+/* --topbar is the height of the top bar with its hairline. Below 1024 px the progress bar makes it taller. It is set on
+   the root of the survey page, whose scroll padding keeps whatever takes focus clear of the top bar, and of the
+   self-screen's bar while that is on the page (--pick-bar is its height, kept by screener.js). */
+:root:has(.shell) { --topbar: 65px; scroll-padding-top: calc(var(--topbar) + var(--s-4)); }
+:root:has(.pick__bar) { scroll-padding-bottom: var(--pick-bar, 0px); }
+.shell { min-height: 100vh; display: flex; flex-direction: column; }
 .topbar { position: sticky; top: 0; z-index: 20; background: var(--paper); border-bottom: 1px solid var(--line); }
 .topbar__in { display: flex; align-items: center; justify-content: space-between; gap: var(--s-5); height: 64px; padding-inline: var(--gutter); }
 .topbar__meta { display: flex; align-items: center; gap: var(--s-5); font-size: 13px; color: var(--ink-2); }
@@ -34,7 +38,7 @@
 .rules li::before { content: counter(rule, decimal-leading-zero); padding-top: 5px; font-size: 11px; font-weight: 500; letter-spacing: .09em; color: var(--ink-2); }
 
 @media (max-width: 1023px) {
-  .shell { --topbar: 67px; }
+  :root:has(.shell) { --topbar: 67px; }
   .shell__body { grid-template-columns: 1fr; }
   .shell__rail { display: none; }
   .shell__rail.is-open { display: block; position: fixed; inset: var(--topbar) 0 0 0; z-index: 15; height: auto; padding: var(--s-6) var(--gutter); border: 0; background: var(--paper); }
@@ -130,11 +134,12 @@ button.opt:disabled > .opt__mark, button.opt:disabled > .opt__text { opacity: .3
    the eight ways of doing a job share the width the job column leaves, (100% - 36%) / 8 each, so every way is
    the same size and the marks sit at equal intervals, where the table's own sizing made one column twice another;
    the second row's label keeps the table's cell padding from the hairline above it, where it sat almost on the line;
-   a part brought into view when Continue is refused clears the top bar, so a tall card shows its job. */
+   a part brought into view when Continue is refused keeps a little space below the top bar, which the page's scroll
+   padding already clears, so a tall card shows its job. */
 .gridq__sub.is-missing .label, .jobcards .is-missing > .label { color: var(--accent); }
 .gridq--jobs thead th { width: 8%; }
 .gridq__sub > td { padding-top: var(--s-3); }
-[data-key] { scroll-margin-top: var(--s-9); }
+[data-key] { scroll-margin-top: var(--s-4); }
 /* The header row of the jobs table stays in view under the top bar while the table scrolls under it, on the table's
    surface and above the rows and their segments. The table draws its borders cell by cell, since only then does a cell
    that stays in view take its hairlines along; the last row's hairline closes the table at the bottom.
