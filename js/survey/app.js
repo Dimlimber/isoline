@@ -37,7 +37,9 @@ const unbuilt = {
 // Draws the shell and the current screen; returns the app object that every screen and field is given.
 export function createApp({ root, instrument, store, config }) {
   const options = { minPromptLength: config.minPromptLength };
-  const app = { instrument, store, config, flow: [], index: 0, screen: null, lastSend: null, next, back, go, goTo, changed };
+  const app = { instrument, store, config, flow: [], index: 0, screen: null, lastSend: null, next, back, go, goTo, changed, beforeLeave };
+  // Work that the screen in view hands over, to be done before it is left.
+  let leaving = [];
   // Nothing is sent unless config.endpoint is set. What could not be sent waits on this device and is tried again on opening.
   const submitter = createSubmitter({ endpoint: config.endpoint, fetch: window.fetch.bind(window), storage: window.localStorage, queueKey: config.queueKey });
   submitter.flush();
@@ -68,9 +70,21 @@ export function createApp({ root, instrument, store, config }) {
   moveTo(saved !== -1 && saved <= first ? saved : first);
   return app;
 
+  // Registers work for the screen in view to do before it is left, such as taking a name typed but not picked.
+  // Moving to another screen forgets it.
+  function beforeLeave(fn) {
+    leaving.push(fn);
+  }
+
+  // Does the work the screen in view handed over. It may change answers, so it comes before anything reads them.
+  function leave() {
+    for (const fn of leaving) fn();
+  }
+
   // Continues when the screen is complete; otherwise marks what is missing. The self-screen continues to the first
   // screen after it that is not complete, so that a person who comes back to add a part is not walked through what is done.
   function next() {
+    leave();
     const { screen } = app;
     if (DONE_ON_CONTINUE.includes(screen.kind)) store.markDone(screen.id);
     const open = SCREENS[screen.kind] ? missing(instrument, screen, store.state, options) : [];
@@ -107,14 +121,17 @@ export function createApp({ root, instrument, store, config }) {
   }
 
   function back() {
+    leave();
     if (app.index > 0) moveTo(app.index - 1);
   }
 
-  // Moves to a screen at or before the first one that is not complete.
+  // Moves to a screen at or before the first one that is not complete, once the screen in view has done its work.
   function go(index) {
+    leave();
     if (index >= 0 && index <= firstIncomplete(instrument, app.flow, store.state, options)) moveTo(index);
   }
 
+  // Moves to the screen with this id, through go(), which does the screen's work first.
   function goTo(screenId) {
     go(app.flow.findIndex((screen) => screen.id === screenId));
   }
@@ -137,6 +154,7 @@ export function createApp({ root, instrument, store, config }) {
   }
 
   function moveTo(index) {
+    leaving = [];
     app.index = index;
     app.screen = app.flow[index];
     store.setPosition(app.screen.id);

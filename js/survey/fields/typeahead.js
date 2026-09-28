@@ -3,10 +3,14 @@
 // While the box holds text the first name is highlighted, so a few letters and Enter are enough.
 // With nothing highlighted, Enter takes the typed text.
 import { h } from '../dom.js';
+import { takenName } from '../suggest.js';
 
 // label names the box and its list, and is drawn visually hidden. It names the box even inside a field whose own label
 // also points at the box, so a screen reader hears it once. suggest(text) returns the names to offer. onPick(name) is
 // called with the chosen or typed name, once the box is empty and the list closed.
+// The element returned has a method take(), which the screen calls as it is left, so that a name typed but not picked
+// is not lost. Leaving the box does not take the name: the card would grow at once, and the press that left the box
+// would land on whatever moved under the pointer.
 export function createTypeahead({ id, label, placeholder = 'Type a name', suggest, onPick }) {
   const labelId = `${id}-label`;
   const listId = `${id}-list`;
@@ -27,7 +31,9 @@ export function createTypeahead({ id, label, placeholder = 'Type a name', sugges
   // A press on the list leaves focus in the box, so the list is still open when the press ends in a pick.
   list.addEventListener('mousedown', (event) => event.preventDefault());
 
-  return h('div', { class: 'ta' }, h('label', { class: 'visually-hidden', id: labelId, for: id }, label), input, list);
+  const el = h('div', { class: 'ta' }, h('label', { class: 'visually-hidden', id: labelId, for: id }, label), input, list);
+  el.take = take;
+  return el;
 
   // Offers the names for the text in the box. While the box holds text, the first name is highlighted.
   function open() {
@@ -62,6 +68,13 @@ export function createTypeahead({ id, label, placeholder = 'Type a name', sugges
     close();
     input.value = '';
     onPick(name);
+  }
+
+  // Takes the typed text as Enter does with nothing highlighted, in the listed spelling of an offered name equal to it
+  // without regard to case. With an empty box it does nothing.
+  function take() {
+    const name = takenName(input.value, suggest(input.value));
+    if (name) pick(name);
   }
 
   // Down and Up step through the names and back to the typed text, and open a closed list.

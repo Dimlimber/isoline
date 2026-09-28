@@ -19,11 +19,17 @@ const MAX_NAMES = 5;
 export function render(screen, app) {
   const { instrument } = app;
   const section = getSection(instrument, screen.section);
+  const cards = h('div', {}, section.tools.map((tool) => toolCard(tool, section.code, app)));
+  // As the person leaves the screen, a name typed into any box but not picked is taken, as Enter would take it.
+  // Continue then sees the name listed, and asks for the questions about it.
+  app.beforeLeave(() => {
+    for (const box of cards.querySelectorAll('.ta')) box.take();
+  });
   return frame(screen, app, {
     kicker: `${getModule(instrument, section.module).name} · ${section.name}`,
     title: 'Your tools',
     lead: `The last part of this section. ${instrument.standard.roster.text}`,
-    body: h('div', {}, section.tools.map((tool) => toolCard(tool, section.code, app)))
+    body: cards
   });
 }
 
@@ -44,7 +50,11 @@ function toolCard(tool, sectionCode, app) {
   const box = typeahead.querySelector('input');
   const kinds = roster.options.slice(1).map((option, i) => {
     const input = h('input', { type: 'radio', name: key, value: KINDS[i] });
-    input.addEventListener('change', () => update({ kind: KINDS[i] }));
+    // A chip empties the box, so that a name left there is not taken over the chip as the screen is left.
+    input.addEventListener('change', () => {
+      box.value = '';
+      update({ kind: KINDS[i] });
+    });
     return { input, label: h('label', { class: option.optout ? 'chip chip--optout' : 'chip' }, input, h('span', {}, option.text)) };
   });
   // The names, the box and the chips keep to the measure, as every field does.

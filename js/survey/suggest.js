@@ -32,3 +32,11 @@ export function withoutNames(names, leaveOut) {
   const out = new Set(leaveOut.map((name) => name.toLowerCase()));
   return names.filter((name) => !out.has(name.toLowerCase()));
 }
+
+// The name taken for typed text: an offered name equal to it without regard to case, in its listed spelling,
+// or else the text itself, trimmed. Blank text gives ''.
+export function takenName(text, offered) {
+  const typed = text.trim();
+  const low = typed.toLowerCase();
+  return offered.find((name) => name.toLowerCase() === low) ?? typed;
+}
