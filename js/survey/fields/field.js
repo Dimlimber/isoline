@@ -4,6 +4,8 @@ import { h } from '../dom.js';
 import { hasValue, isSkipped } from '../conditions.js';
 
 const SAVE_DELAY = 300;
+// A single or multiple choice list with at least this many options, opt-outs not counted, takes two columns on a wide screen.
+const TWO_COLUMNS_FROM = 12;
 
 // The id of the control a field's label names, made from its answer key.
 export function idFor(key) {
@@ -79,13 +81,23 @@ export function onTyping(control, write) {
   };
 }
 
+// True when a list of options is long enough to take two columns on a wide screen.
+export function inTwoColumns(options) {
+  return options.filter((option) => !option.optout).length >= TWO_COLUMNS_FROM;
+}
+
 // The rows of an option list: inputs of this type sharing the answer key as their name, opt-outs last in their own order.
 // An option marked ask_text shows a box for a few words while it is chosen; releasing the option removes the words.
-export function optionRows(options, ctx, { type, chosen, onChange }) {
+// With columns, the options that are not opt-outs are split between two columns, the first taking one more when they
+// are odd; the opt-outs follow both. The page keeps the order of the options, which is also the order read and tabbed.
+export function optionRows(options, ctx, { type, chosen, onChange, columns = false }) {
   const id = idFor(ctx.key);
   const ordered = [...options.filter((option) => !option.optout), ...options.filter((option) => option.optout)];
-  const list = h('div', { class: 'opts' });
-  const rows = ordered.map((option) => {
+  const list = h('div', { class: columns ? 'opts opts--cols' : 'opts' });
+  const cols = columns ? [h('div', { class: 'opts__col' }), h('div', { class: 'opts__col' })] : [];
+  const half = Math.ceil(options.filter((option) => !option.optout).length / 2);
+  list.append(...cols);
+  const rows = ordered.map((option, i) => {
     const input = h('input', { class: 'opt__input', type, name: ctx.key, value: String(option.n), checked: chosen(option.n) });
     const label = h('label', { class: option.optout ? 'opt opt--optout' : 'opt' },
       input,
@@ -93,7 +105,8 @@ export function optionRows(options, ctx, { type, chosen, onChange }) {
       h('span', { class: 'opt__text', id: `${id}-${option.n}` }, option.text));
     const row = { option, input, label, extra: null };
     input.addEventListener('change', () => onChange(row));
-    list.append(label);
+    const holder = columns && !option.optout ? cols[i < half ? 0 : 1] : list;
+    holder.append(label);
     return row;
   });
 

@@ -34,6 +34,15 @@
 .opt--optout + .opt--optout { margin-top: -1px; }
 .opt--optout .opt__text { color: var(--ink-2); }
 .opt__extra { margin: var(--s-3) 0 var(--s-4) 28px; }
+.opts--cols { max-width: var(--measure); }
+.opts__col { display: flex; flex-direction: column; }
+.opts__col + .opts__col { margin-top: -1px; }
+@media (min-width: 1024px) {
+  .opts--cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; max-width: none; padding-right: 1px; }
+  .opts--cols > * { margin-right: -1px; }
+  .opts--cols > :not(.opts__col) { grid-column: 1 / -1; }
+  .opts__col + .opts__col { margin-top: 0; }
+}
 
 .seg { display: flex; flex-wrap: wrap; }
 .seg__item { position: relative; flex: 1 1 0; min-width: max-content; margin-left: -1px; }

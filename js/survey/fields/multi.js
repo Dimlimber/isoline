@@ -1,12 +1,14 @@
 // Any number of options from a list, where an opt-out stands alone. A question with max takes no more than that.
-import { fieldShell, optionRows, save } from './field.js';
+// A long list takes two columns and the full width on a wide screen.
+import { fieldShell, inTwoColumns, optionRows, save } from './field.js';
 
 export function render(question, ctx) {
   const stored = ctx.app.store.get(ctx.key);
   const picked = Array.isArray(stored) ? stored : [];
-  const options = optionRows(question.options, ctx, { type: 'checkbox', chosen: (n) => picked.includes(n), onChange });
+  const columns = inTwoColumns(question.options);
+  const options = optionRows(question.options, ctx, { type: 'checkbox', chosen: (n) => picked.includes(n), onChange, columns });
   limit();
-  return fieldShell(question, ctx, options.list, { help: question.max ? 'Pick up to two.' : undefined, clear: options.clear });
+  return fieldShell(question, ctx, options.list, { help: question.max ? 'Pick up to two.' : undefined, wide: columns, clear: options.clear });
 
   function onChange(row) {
     if (row.input.checked) {
