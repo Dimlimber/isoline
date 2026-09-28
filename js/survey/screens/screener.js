@@ -7,10 +7,13 @@ import { offeredSections, selectedSections } from '../flow.js';
 import { minutes, secondsFor } from '../timing.js';
 import { idFor } from '../fields/field.js';
 import { frame } from './frame.js';
+import { invite } from './invite.js';
 
 const KEY = 'CORE.14';
 const KNOW_IT_WELL = 3;
 const NOT_ME = 4;
+// The link for colleagues is offered here too, so that parts can be handed out before any is answered.
+const INVITE = 'Parts you cannot speak to can go to colleagues. Anyone in your marketing organization can use this link.';
 
 export function render(screen, app) {
   const { instrument, store, config } = app;
@@ -37,7 +40,7 @@ export function render(screen, app) {
     kicker: 'Start',
     title: question.text,
     lead: 'How the work gets done, with what data, and with which tools. Mark every part you can speak to. One person can take them all.',
-    body: [list, bar]
+    body: [list, invite(app, INVITE), bar]
   });
 
   // A section: its name and what it covers, then the four options of CORE.14, the last an opt-out.

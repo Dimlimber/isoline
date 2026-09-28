@@ -1,16 +1,16 @@
 // The finish: what the person covered, a link for colleagues, more parts, a copy to keep, and whether the answers were sent.
 import { h } from '../dom.js';
-import { encodeInvite, pickFacts } from '../company.js';
-import { isScreenComplete, merged, railItems } from '../flow.js';
+import { isScreenComplete, railItems } from '../flow.js';
 import { frame } from './frame.js';
+import { invite } from './invite.js';
 
 // Rail groups that hold no part of marketing.
 const NOT_PARTS = ['Start', 'Finish'];
 // The end of the rail key of a job of marketing's closing block, which is not a section.
 const BLOCK = ':block';
-const COPIED_FOR = 2000;
 // Some browsers read the file after the click has returned, so the file is let go a little later.
 const RELEASE_AFTER = 10000;
+const INVITE = 'Anyone in your marketing organization can use this link. One person can answer everything, or each person can take their part.';
 const SENDING = {
   off: 'Your answers are stored on this device.',
   sent: 'Your answers have been sent.',
@@ -25,7 +25,7 @@ export function render(screen, app) {
     kicker: 'Finish',
     title: 'Thank you',
     lead: 'Your answers are saved.',
-    body: [covered(app), invite(app), more(app), keep(app), sending(app)],
+    body: [covered(app), invite(app, INVITE), more(app), keep(app), sending(app)],
     continueLabel: null
   });
 }
@@ -41,45 +41,6 @@ function covered(app) {
   return h('section', { class: 'end__part' },
     h('h2', { class: 'h3' }, 'What you covered'),
     labels.length > 0 ? h('ul', { class: 'plain' }, labels.map((label) => h('li', {}, label))) : h('p', { class: 'note' }, 'No parts yet.'));
-}
-
-// A link to the start page for this company. It carries the facts that decide what colleagues are asked,
-// after the # so that browsers never send it to a server.
-function invite(app) {
-  const { state } = app.store;
-  const { code, name } = state.company;
-  const fragment = encodeInvite({ code, name, facts: pickFacts(merged(state)) });
-  const link = new URL(`start.html#${fragment}`, window.location.href).href;
-  const field = h('input', { class: 'input', type: 'text', readonly: true, value: link, 'aria-labelledby': 'end-invite' });
-  const button = h('button', { class: 'btn', type: 'button', onClick: copy }, 'Copy link');
-  // The button's new words are seen; this hidden line has a screen reader say them too.
-  const status = h('span', { class: 'visually-hidden', role: 'status' });
-  let timer = 0;
-  return h('section', { class: 'end__part' },
-    h('h2', { class: 'h3', id: 'end-invite' }, 'Invite colleagues'),
-    h('p', {}, 'Anyone in your marketing organization can use this link. One person can answer everything, or each person can take their part.'),
-    field,
-    button,
-    status,
-    h('p', { class: 'note' }, `Company code: ${code}`));
-
-  async function copy() {
-    field.select();
-    try {
-      await navigator.clipboard.writeText(link);
-    } catch {
-      // The browser did not allow it: the link stays selected, to copy by hand.
-      return;
-    }
-    button.textContent = 'Copied';
-    status.textContent = 'Copied';
-    clearTimeout(timer);
-    // The line empties again with the button, so that the next copy is announced as well.
-    timer = setTimeout(() => {
-      button.textContent = 'Copy link';
-      status.textContent = '';
-    }, COPIED_FOR);
-  }
 }
 
 // Back to the self-screen, to choose more parts.
