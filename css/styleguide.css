@@ -1,0 +1,10 @@
+/* Layout of this page only. It is not part of the design system. */
+main { padding-block: var(--s-7) var(--s-8); }
+main > section { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); gap: var(--s-4) var(--s-5); align-items: baseline; padding-bottom: var(--s-7); }
+.sg-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4); }
+.sg-scroll { overflow-x: auto; }
+.sg-room { padding-bottom: 176px; } /* room for the open list below the typeahead */
+@media (max-width: 1023px) {
+  main > section { grid-template-columns: minmax(0, 1fr); }
+}
+.sg-fill { width: 40%; } /* the bar sample, part of the way */

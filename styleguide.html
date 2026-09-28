@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Isoline components</title>
 <meta name="robots" content="noindex,nofollow">
@@ -12,17 +13,7 @@
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/controls.css">
 <link rel="stylesheet" href="css/survey.css">
-<style>
-/* Layout of this page only. It is not part of the design system. */
-main { padding-block: var(--s-7) var(--s-8); }
-main > section { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); gap: var(--s-4) var(--s-5); align-items: baseline; padding-bottom: var(--s-7); }
-.sg-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4); }
-.sg-scroll { overflow-x: auto; }
-.sg-room { padding-bottom: 176px; } /* room for the open list below the typeahead */
-@media (max-width: 1023px) {
-  main > section { grid-template-columns: minmax(0, 1fr); }
-}
-</style>
+<link rel="stylesheet" href="css/styleguide.css">
 </head>
 <body>
 
@@ -1128,7 +1119,7 @@ main > section { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr
   <section>
     <h2 class="label">Bar</h2>
     <div class="bar" role="progressbar" aria-label="Progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="40">
-      <div class="bar__fill" style="width: 40%"></div>
+      <div class="bar__fill sg-fill"></div>
     </div>
   </section>
 
