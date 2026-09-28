@@ -11,13 +11,16 @@ const root = document.getElementById('start');
 const storage = deviceStorage();
 const store = createStore(storage, { key: config.storageKey });
 
-render();
-// An invitation pasted into the address bar changes only the fragment, which does not load the page again.
-window.addEventListener('hashchange', render);
-// Going back from the survey can restore this page as it was left, so it is drawn again from what is saved now.
-window.addEventListener('pageshow', (event) => {
-  if (event.persisted) render();
-});
+// In a browser too old for the survey, check.js has already said so in place of the page, and nothing more happens.
+if (!document.documentElement.hasAttribute('data-old-browser')) {
+  render();
+  // An invitation pasted into the address bar changes only the fragment, which does not load the page again.
+  window.addEventListener('hashchange', render);
+  // Going back from the survey can restore this page as it was left, so it is drawn again from what is saved now.
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted) render();
+  });
+}
 
 // What the page offers follows from the answers saved on this device and the invitation in the link.
 // A link for the company saved here hands over the facts and the name the saved company lacks, then offers to continue.

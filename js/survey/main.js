@@ -7,7 +7,14 @@ import { createApp } from './app.js';
 const root = document.getElementById('app');
 const store = createStore(deviceStorage(), { key: config.storageKey });
 
-if (store.load()) {
+// In a browser too old for the survey, check.js has already said so in place of the page, and nothing more happens.
+if (!document.documentElement.hasAttribute('data-old-browser')) begin();
+
+function begin() {
+  if (!store.load()) {
+    window.location.replace('start.html');
+    return;
+  }
   open();
   // Another tab, or this page shown again by the browser from its cache, may find other answers stored than the page
   // holds. The page then loads afresh from what is stored, so that neither copy overwrites the other.
@@ -17,8 +24,6 @@ if (store.load()) {
   window.addEventListener('pageshow', (event) => {
     if (event.persisted) reloadIfChanged();
   });
-} else {
-  window.location.replace('start.html');
 }
 
 async function open() {
@@ -44,7 +49,7 @@ async function open() {
 
 // The message in place of the survey when it cannot be drawn.
 function failed() {
-  mount(root, h('p', { class: 'wrap', style: 'padding-block:48px' }, 'The survey could not load. Check your connection and reload the page.'));
+  mount(root, h('p', { class: 'wrap page-note' }, 'The survey could not load. Check your connection and reload the page.'));
 }
 
 // Reloads when the state stored on this device is not the one the page holds, told apart by the respondent's id and
