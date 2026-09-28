@@ -23,9 +23,9 @@ const DONE_ON_CONTINUE = ['welcome', 'intro', 'end'];
 const WIDE = '(min-width: 1024px)';
 // The page's title is the screen's title, then this.
 const SITE = 'Isoline survey';
-// What the navigation row says when Continue is refused, by kind of screen.
+// What the navigation row says when Continue is refused, by kind of screen. A screen module with its own refused()
+// says it itself instead.
 const REFUSED = {
-  screener: 'Mark at least one part to continue.',
   jobs: 'Answer for every job to continue.',
   prompt: 'Write a few sentences to continue.',
   tools: 'Answer for every tool to continue.'
@@ -111,7 +111,8 @@ export function createApp({ root, instrument, store, config }) {
     const { screen } = app;
     if (DONE_ON_CONTINUE.includes(screen.kind)) store.markDone(screen.id);
     const open = SCREENS[screen.kind] ? missing(instrument, screen, store.state, options) : [];
-    if (open.length > 0) showMissing(open);
+    if (open.length > 0 && SCREENS[screen.kind].refused) SCREENS[screen.kind].refused(main);
+    else if (open.length > 0) showMissing(open);
     else if (app.index < app.flow.length - 1) {
       if (endsPart()) sending.send('progress');
       moveTo(screen.kind === 'screener' ? firstIncomplete(instrument, app.flow, store.state, options, app.index) : app.index + 1);

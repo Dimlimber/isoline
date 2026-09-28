@@ -15,6 +15,14 @@ const NOT_ME = 4;
 // The link for colleagues is offered here too, so that parts can be handed out before any is answered.
 const INVITE = 'Parts you cannot speak to can go to colleagues. Anyone in your marketing organization can use this link.';
 
+// A refused Continue adds no second message. The bar already says a part must be marked; that sentence becomes an
+// alert, and setting its words again has them read out. It is a status again from the next change.
+export function refused(view) {
+  const summary = view.querySelector('.pick__bar > p');
+  summary.setAttribute('role', 'alert');
+  summary.textContent = summary.textContent;
+}
+
 export function render(screen, app) {
   const { instrument, store, config } = app;
   const question = getQuestion(instrument, KEY);
@@ -86,6 +94,7 @@ export function render(screen, app) {
 
   // How many sections are chosen and how long the survey takes with them.
   function summarize() {
+    summary.setAttribute('role', 'status');
     const chosen = selectedSections(instrument, store.state);
     if (chosen.length === 0) {
       summary.textContent = 'Mark at least one part to continue.';
