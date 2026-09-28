@@ -4,6 +4,10 @@ import { h } from '../dom.js';
 import { hasValue, isSkipped } from '../conditions.js';
 
 const SAVE_DELAY = 300;
+// The saves that wait for their delay, by control. When the page is hidden they are all written at once, so that the
+// last keystrokes are not lost. One listener serves the page, and a control is held only while its save waits.
+const waiting = new Map();
+let listening = false;
 // A single or multiple choice list with at least this many options, opt-outs not counted, takes two columns on a wide screen.
 const TWO_COLUMNS_FROM = 12;
 
@@ -60,13 +64,14 @@ export function save(ctx, value, from) {
   app.changed();
 }
 
-// Calls write with the trimmed text 300 ms after the last keystroke, and when the control loses focus, if the text changed.
-// Returns a function that sets the text without saving it.
+// Calls write with the trimmed text 300 ms after the last keystroke, when the control loses focus and when the page is
+// hidden, if the text changed. Returns a function that sets the text without saving it.
 export function onTyping(control, write) {
   let last = control.value;
   let timer = 0;
   const flush = () => {
     clearTimeout(timer);
+    waiting.delete(control);
     if (control.value === last) return;
     last = control.value;
     write(last.trim());
@@ -74,13 +79,29 @@ export function onTyping(control, write) {
   control.addEventListener('input', () => {
     clearTimeout(timer);
     timer = setTimeout(flush, SAVE_DELAY);
+    wait(control, flush);
   });
   control.addEventListener('blur', flush);
   return (text) => {
     clearTimeout(timer);
+    waiting.delete(control);
     control.value = text;
     last = text;
   };
+}
+
+// Holds a save that waits. The page's listener is added the first time one does. A field no longer on the page when
+// the page is hidden drops out without writing, since its screen has gone.
+function wait(control, flush) {
+  waiting.set(control, flush);
+  if (listening) return;
+  listening = true;
+  window.addEventListener('pagehide', () => {
+    for (const [held, write] of [...waiting]) {
+      if (held.isConnected) write();
+      else waiting.delete(held);
+    }
+  });
 }
 
 // True when a list of options is long enough to take two columns on a wide screen.
