@@ -51,12 +51,15 @@ function invite(app) {
   const link = new URL(`start.html#${fragment}`, window.location.href).href;
   const field = h('input', { class: 'input', type: 'text', readonly: true, value: link, 'aria-labelledby': 'end-invite' });
   const button = h('button', { class: 'btn', type: 'button', onClick: copy }, 'Copy link');
+  // The button's new words are seen; this hidden line has a screen reader say them too.
+  const status = h('span', { class: 'visually-hidden', role: 'status' });
   let timer = 0;
   return h('section', { class: 'end__part' },
     h('h2', { class: 'h3', id: 'end-invite' }, 'Invite colleagues'),
     h('p', {}, 'Anyone in your marketing organization can use this link. One person can answer everything, or each person can take their part.'),
     field,
     button,
+    status,
     h('p', { class: 'note' }, `Company code: ${code}`));
 
   async function copy() {
@@ -68,8 +71,13 @@ function invite(app) {
       return;
     }
     button.textContent = 'Copied';
+    status.textContent = 'Copied';
     clearTimeout(timer);
-    timer = setTimeout(() => { button.textContent = 'Copy link'; }, COPIED_FOR);
+    // The line empties again with the button, so that the next copy is announced as well.
+    timer = setTimeout(() => {
+      button.textContent = 'Copy link';
+      status.textContent = '';
+    }, COPIED_FOR);
   }
 }
 
