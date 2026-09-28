@@ -83,7 +83,8 @@ function format(chars) {
   return `${chars.slice(0, 4)}-${chars.slice(4)}`;
 }
 
-function isPlainObject(value) {
+// True for an object that is not a list and not null.
+export function isPlainObject(value) {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 

@@ -18,12 +18,22 @@ async function open() {
     if (!response.ok) throw new Error(response.status);
     instrument = await response.json();
   } catch {
-    mount(root, h('p', { class: 'wrap', style: 'padding-block:48px' }, 'The survey could not load. Check your connection and reload the page.'));
+    failed();
     return;
   }
   // The start page cannot know the version, since it does not load the instrument; the answers carry it from here.
   store.setInstrument(instrument.version);
-  createApp({ root, instrument, store, config });
+  // Anything else that stops the survey being drawn shows the same message, rather than a blank page.
+  try {
+    createApp({ root, instrument, store, config });
+  } catch {
+    failed();
+  }
+}
+
+// The message in place of the survey when it cannot be drawn.
+function failed() {
+  mount(root, h('p', { class: 'wrap', style: 'padding-block:48px' }, 'The survey could not load. Check your connection and reload the page.'));
 }
 
 // Local storage, or null where the browser blocks it; with null nothing loads and the person is sent to the start.

@@ -1,5 +1,5 @@
 // One person's survey state and its persistence. Pure: the storage is passed in.
-import { ALPHABET } from './company.js';
+import { ALPHABET, isPlainObject, normalizeCode } from './company.js';
 
 const ID_LENGTH = 10;
 const FNV_OFFSET = 0x811c9dc5;
@@ -141,10 +141,21 @@ function readState(storage, key) {
     const text = storage.getItem(key);
     if (text === null) return null;
     const parsed = JSON.parse(text);
-    return parsed?.v === 1 ? parsed : null;
+    return isUsable(parsed) ? parsed : null;
   } catch {
     return null;
   }
+}
+
+// True for a state of this version with every part the pages read, of the right kind: a company with a code, a name,
+// whether this person started it and its facts; a respondent with an id; the answers and the screens done.
+function isUsable(state) {
+  const company = state?.company;
+  return state?.v === 1
+    && isPlainObject(company) && normalizeCode(company.code) !== null && typeof company.name === 'string'
+    && typeof company.owner === 'boolean' && isPlainObject(company.facts)
+    && isPlainObject(state.respondent) && typeof state.respondent.id === 'string'
+    && isPlainObject(state.answers) && isPlainObject(state.done);
 }
 
 function respondentId(random) {
