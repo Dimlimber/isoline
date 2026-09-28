@@ -13,7 +13,8 @@ else window.location.replace('start.html');
 async function open() {
   let instrument;
   try {
-    const response = await fetch(config.instrumentUrl);
+    // The browser checks with the server before using a copy it kept, so a changed instrument is picked up.
+    const response = await fetch(config.instrumentUrl, { cache: 'no-cache' });
     if (!response.ok) throw new Error(response.status);
     instrument = await response.json();
   } catch {
