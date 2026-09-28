@@ -140,13 +140,14 @@ export function createApp({ root, instrument, store, config }) {
 
   // Called after any answer changes. Rebuilds the flow and keeps the screen in place without redrawing it,
   // so that fields keep their state; only the rail, the time left, the bar and any marks are redrawn.
-  // A screen that has left the flow gives way to whatever screen now sits at its place.
+  // A screen that has left the flow gives way to the screen now at its place, or to the first screen not yet complete
+  // when that comes earlier: leaving out the only section chosen leads back to the self-screen, not to the finish.
   function changed() {
     const id = app.screen.id;
     app.flow = buildFlow(instrument, store.state, config);
     const index = app.flow.findIndex((screen) => screen.id === id);
     if (index === -1) {
-      moveTo(Math.min(app.index, app.flow.length - 1));
+      moveTo(Math.min(app.index, firstIncomplete(instrument, app.flow, store.state, options)));
       return;
     }
     app.index = index;
