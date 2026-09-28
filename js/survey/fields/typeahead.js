@@ -1,9 +1,9 @@
 // A box that offers names as the person types, following the combobox pattern. Focus stays in the box:
 // the arrow keys move a highlight through the list, and aria-activedescendant tells a screen reader which name it is on.
-// While the box holds text the first name is highlighted, so a few letters and Enter are enough.
-// With nothing highlighted, Enter takes the typed text.
+// While the first name starts with the text in the box it is highlighted, so a few letters and Enter are enough.
+// Otherwise nothing is highlighted, and Enter takes the typed text.
 import { h } from '../dom.js';
-import { takenName } from '../suggest.js';
+import { leadsWith, takenName } from '../suggest.js';
 
 // label names the box and its list, and is drawn visually hidden. It names the box even inside a field whose own label
 // also points at the box, so a screen reader hears it once. suggest(text) returns the names to offer. onPick(name) is
@@ -35,7 +35,7 @@ export function createTypeahead({ id, label, placeholder = 'Type a name', sugges
   el.take = take;
   return el;
 
-  // Offers the names for the text in the box. While the box holds text, the first name is highlighted.
+  // Offers the names for the text in the box. The first name is highlighted only when it starts with that text.
   function open() {
     names = suggest(input.value);
     list.replaceChildren(...names.map((name, i) => h('li', {
@@ -43,7 +43,7 @@ export function createTypeahead({ id, label, placeholder = 'Type a name', sugges
     }, name)));
     list.hidden = names.length === 0;
     input.setAttribute('aria-expanded', String(!list.hidden));
-    highlight(input.value.trim() === '' ? -1 : 0);
+    highlight(leadsWith(names, input.value) ? 0 : -1);
   }
 
   function close() {

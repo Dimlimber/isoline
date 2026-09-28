@@ -1,7 +1,8 @@
 // The names to offer for what a person has typed. Pure: no DOM.
 
 // Up to `limit` names, compared without regard to case. A blank query offers the first names of `primary`.
-// Otherwise, without repeats: names in `primary` that start with the query, then names in `primary` that contain it,
+// Otherwise, without repeats: a name equal to the query, from `primary` and then from `secondary`, so that a name typed
+// in full comes first; then names in `primary` that start with the query, then names in `primary` that contain it,
 // then the same two groups from `secondary`. Each group keeps the order it is given in.
 export function rankSuggestions(query, primary, secondary = [], limit = 8) {
   const q = query.trim().toLowerCase();
@@ -18,8 +19,11 @@ export function rankSuggestions(query, primary, secondary = [], limit = 8) {
       }
     }
   };
+  const equals = (low) => low === q;
   const starts = (low) => low.startsWith(q);
   const contains = (low) => low.includes(q);
+  take(primary, equals);
+  take(secondary, equals);
   take(primary, starts);
   take(primary, contains);
   take(secondary, starts);
@@ -39,4 +43,11 @@ export function takenName(text, offered) {
   const typed = text.trim();
   const low = typed.toLowerCase();
   return offered.find((name) => name.toLowerCase() === low) ?? typed;
+}
+
+// True when something is typed and the first name offered starts with it, without regard to case. Only then does
+// the box highlight that name on its own, so that Enter never swaps a name typed in full for a longer one.
+export function leadsWith(names, text) {
+  const typed = text.trim().toLowerCase();
+  return typed !== '' && names.length > 0 && names[0].toLowerCase().startsWith(typed);
 }

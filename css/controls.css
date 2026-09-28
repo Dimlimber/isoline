@@ -132,7 +132,8 @@ button.rail__item:hover { color: var(--ink); }
 .ta { position: relative; }
 .ta__list { position: absolute; z-index: 10; left: 0; right: 0; top: calc(100% - 1px); max-height: 280px; overflow: auto; border: 1px solid var(--ink); background: var(--surface); }
 .ta__opt { padding: 10px 14px; font-size: 15px; cursor: pointer; }
-.ta__opt[aria-selected="true"], .ta__opt:hover { background: var(--paper); }
+.ta__opt:hover { background: var(--paper); }
+.ta__opt[aria-selected="true"] { background: var(--ink); color: var(--paper); }
 
 @media (max-width: 640px) {
   .field__label { font-size: 18px; }
