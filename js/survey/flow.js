@@ -102,10 +102,17 @@ export function missing(instrument, screen, state, { minPromptLength = 20 } = {}
 }
 
 // The index of the first screen that is not complete, or of the last screen when every one is.
-// options are those of isScreenComplete.
-export function firstIncomplete(instrument, flow, state, options) {
-  const index = flow.findIndex((screen) => !isScreenComplete(instrument, screen, state, options));
+// options are those of isScreenComplete. With `after`, only the screens after that index are looked at.
+export function firstIncomplete(instrument, flow, state, options, after = -1) {
+  const index = flow.findIndex((screen, i) => i > after && !isScreenComplete(instrument, screen, state, options));
   return index === -1 ? flow.length - 1 : index;
+}
+
+// Where pressing a rail item leads, given the index of the first screen not yet complete: the item that holds that
+// screen leads to it, an item before it leads to its own first screen, and an item beyond it leads nowhere (null).
+export function railTarget(item, first) {
+  if (item.last < first) return item.first;
+  return item.first <= first ? first : null;
 }
 
 // The progress rail: one item for each run of screens that share a rail key.

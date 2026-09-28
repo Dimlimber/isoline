@@ -1,6 +1,6 @@
 // The survey page: the top bar, the progress rail, one screen at a time, and moving between screens.
 import { clear, h, mount } from './dom.js';
-import { buildFlow, firstIncomplete, isScreenComplete, missing, railItems } from './flow.js';
+import { buildFlow, firstIncomplete, isScreenComplete, missing, railItems, railTarget } from './flow.js';
 import { createSubmitter } from './submit.js';
 import { minutes, remainingSeconds } from './timing.js';
 import { frame } from './screens/frame.js';
@@ -68,7 +68,8 @@ export function createApp({ root, instrument, store, config }) {
   moveTo(saved !== -1 && saved <= first ? saved : first);
   return app;
 
-  // Continues when the screen is complete; otherwise marks what is missing.
+  // Continues when the screen is complete; otherwise marks what is missing. The self-screen continues to the first
+  // screen after it that is not complete, so that a person who comes back to add a part is not walked through what is done.
   function next() {
     const { screen } = app;
     if (DONE_ON_CONTINUE.includes(screen.kind)) store.markDone(screen.id);
@@ -76,7 +77,7 @@ export function createApp({ root, instrument, store, config }) {
     if (open.length > 0) showMissing(open);
     else if (app.index < app.flow.length - 1) {
       if (endsPart()) send('progress');
-      moveTo(app.index + 1);
+      moveTo(screen.kind === 'screener' ? firstIncomplete(instrument, app.flow, store.state, options, app.index) : app.index + 1);
     }
   }
 
@@ -189,11 +190,11 @@ export function createApp({ root, instrument, store, config }) {
     const share = Math.round((100 * Object.keys(complete).length) / app.flow.length);
     fill.style.width = `${share}%`;
     bar.setAttribute('aria-valuenow', String(share));
-    mount(rail, drawRail(complete));
+    mount(rail, drawRail(complete, firstIncomplete(instrument, app.flow, store.state, options)));
   }
 
-  // One item per run of screens, grouped under their job of marketing. Items done or current are buttons.
-  function drawRail(complete) {
+  // One item per run of screens, grouped under their job of marketing. first is the index of the first screen not yet complete.
+  function drawRail(complete, first) {
     const groups = [];
     for (const item of railItems(app.flow)) {
       if (groups.at(-1)?.name !== item.group) groups.push({ name: item.group, items: [] });
@@ -201,16 +202,20 @@ export function createApp({ root, instrument, store, config }) {
     }
     return h('div', { class: 'rail' }, groups.map((group) => h('div', { class: 'rail__group' },
       h('p', { class: 'label' }, group.name),
-      group.items.map((item) => railItem(item, complete)))));
+      group.items.map((item) => railItem(item, complete, first)))));
   }
 
-  function railItem(item, complete) {
+  // An item that can be gone to is a button: a done item leads to its first screen, and the item that holds the first
+  // screen not yet complete leads to that screen. Items beyond it are plain text.
+  function railItem(item, complete, first) {
     const done = app.flow.slice(item.first, item.last + 1).every((screen) => complete[screen.id]);
     const current = app.index >= item.first && app.index <= item.last;
     const className = ['rail__item', done && 'is-done', current && 'is-current'].filter(Boolean).join(' ');
     const content = [h('span', { class: 'rail__mark' }), item.label];
-    if (!done && !current) return h('div', { class: className }, content);
-    return h('button', { class: className, type: 'button', 'aria-current': current ? 'step' : null, onClick: () => go(item.first) }, content);
+    const target = railTarget(item, first);
+    const props = { class: className, 'aria-current': current ? 'step' : null };
+    if (target === null) return h('div', props, content);
+    return h('button', { ...props, type: 'button', onClick: () => go(target) }, content);
   }
 
   // On narrow screens the rail opens over the page. While it is open the page under it cannot take focus.
