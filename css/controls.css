@@ -82,6 +82,8 @@
 .split__total { display: flex; justify-content: space-between; padding-top: var(--s-3); font-size: 14px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .split__total.is-ok { color: var(--ink); }
 
+.plain { border-top: 1px solid var(--line); }
+.plain li { padding: var(--s-4) 0; border-bottom: 1px solid var(--line); font-size: 18px; line-height: 1.4; }
 .card { background: var(--surface); border: 1px solid var(--line); padding: var(--s-5); }
 .card + .card { margin-top: -1px; }
 .card__head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-4); padding-bottom: var(--s-4); margin-bottom: var(--s-5); border-bottom: 1px solid var(--line); }

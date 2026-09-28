@@ -41,7 +41,6 @@
    the navigation row wraps rather than squeezing its message on a phone;
    the open rail drops the align-self it has in the grid, which would stop it reaching the bottom of the window;
    an option waiting behind a limit of two looks unavailable, as a disabled button does. */
-[hidden] { display: none !important; }
 .screen__nav { flex-wrap: wrap; }
 .opt:has(.opt__input:disabled) { pointer-events: none; }
 .opt:has(.opt__input:disabled) > .opt__mark, .opt:has(.opt__input:disabled) > .opt__text { opacity: .3; }
