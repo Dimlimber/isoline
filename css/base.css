@@ -46,7 +46,9 @@ legend { padding: 0; }
 .site-head__in { display: flex; align-items: center; justify-content: space-between; height: 64px; }
 .wordmark { font-size: 17px; font-weight: 500; letter-spacing: -.01em; }
 .site-nav { display: flex; align-items: center; gap: var(--s-5); font-size: 14px; }
-.site-nav a:not(.btn) { color: var(--ink-2); transition: color var(--dur) var(--ease); }
+.site-nav a:not(.btn) { position: relative; color: var(--ink-2); transition: color var(--dur) var(--ease); }
+/* Small text controls take presses over an area 44 px tall, without changing how they look or where things sit. */
+.site-nav a:not(.btn)::before { content: ""; position: absolute; inset: calc(50% - 22px) 0; }
 .site-nav a:not(.btn):hover, .site-nav a[aria-current="page"] { color: var(--ink); }
 .site-foot { border-top: 1px solid var(--line); padding-block: var(--s-6); font-size: 13px; color: var(--ink-2); }
 .site-foot__in { display: flex; justify-content: space-between; gap: var(--s-5); flex-wrap: wrap; }
@@ -63,9 +65,11 @@ legend { padding: 0; }
 .btn--primary:hover { background: #2b2a28; border-color: #2b2a28; }
 .btn--small { height: 36px; padding: 0 var(--s-4); font-size: 14px; }
 .btn--quiet {
-  height: auto; padding: 0 0 1px; border: 0; border-bottom: 1px solid var(--line-2);
+  position: relative; height: auto; padding: 0 0 1px; border: 0; border-bottom: 1px solid var(--line-2);
   color: var(--ink-2); font-weight: 400; font-size: 14px;
 }
+/* The area reaches 12 px up, the space above a skip control, so it never takes a press meant for the options above. */
+.btn--quiet::before { content: ""; position: absolute; inset: -12px 0 -17px; }
 .btn--quiet:hover { background: transparent; color: var(--ink); border-bottom-color: var(--ink); }
 .btn[disabled], .btn[aria-disabled="true"] { opacity: .3; pointer-events: none; }
 
