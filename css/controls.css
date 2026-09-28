@@ -58,7 +58,7 @@
 .textarea { height: auto; min-height: 200px; padding: 14px; line-height: 1.5; resize: vertical; }
 .input:hover, .textarea:hover { border-color: var(--ink-3); }
 .input:focus, .textarea:focus { border-color: var(--ink); outline: 2px solid var(--accent); outline-offset: 2px; }
-.input::placeholder, .textarea::placeholder { color: var(--ink-3); }
+.input::placeholder, .textarea::placeholder { color: var(--placeholder); }
 .input--num { width: 96px; text-align: right; font-variant-numeric: tabular-nums; }
 
 .chips { display: flex; flex-wrap: wrap; gap: var(--s-2); }
@@ -92,8 +92,8 @@
 .gridq th, .gridq td { position: relative; border-bottom: 1px solid var(--line); padding: 12px 8px; text-align: center; vertical-align: middle; }
 .gridq thead th { font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); vertical-align: bottom; line-height: 1.3; padding-bottom: 10px; }
 .gridq tbody th { width: 36%; padding-left: var(--s-4); text-align: left; font-weight: 400; font-size: 15px; line-height: 1.35; }
-.gridq td label { display: grid; place-items: center; min-height: 32px; cursor: pointer; }
-.gridq td input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.gridq td > label { display: grid; place-items: center; min-height: 32px; cursor: pointer; }
+.gridq td > label > input { position: absolute; opacity: 0; width: 1px; height: 1px; }
 .gridq td .opt__mark { margin: 0; }
 .gridq td input:focus-visible + .opt__mark { outline: 2px solid var(--accent); outline-offset: 2px; }
 .gridq tbody tr:hover > * { background: var(--hover); }
