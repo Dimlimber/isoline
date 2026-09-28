@@ -26,3 +26,9 @@ export function rankSuggestions(query, primary, secondary = [], limit = 8) {
   take(secondary, contains);
   return found;
 }
+
+// The names that are not in `leaveOut`, compared without regard to case, in the order given.
+export function withoutNames(names, leaveOut) {
+  const out = new Set(leaveOut.map((name) => name.toLowerCase()));
+  return names.filter((name) => !out.has(name.toLowerCase()));
+}

@@ -6,7 +6,7 @@ import { h } from '../dom.js';
 import { getModule, getSection } from '../lookup.js';
 import { holds, resolveKey } from '../conditions.js';
 import { merged } from '../flow.js';
-import { rankSuggestions } from '../suggest.js';
+import { rankSuggestions, withoutNames } from '../suggest.js';
 import { renderField } from '../fields/index.js';
 import { fieldShell, forget, idFor, save } from '../fields/field.js';
 import { createTypeahead } from '../fields/typeahead.js';
@@ -36,6 +36,8 @@ function toolCard(tool, sectionCode, app) {
   const key = `${scope}:name`;
   const id = idFor(key);
   const suggest = (text) => rankSuggestions(text, tool.vendors, instrument.all_vendors);
+  // A tool is not its own replacement: the boxes about the first tool offer the same names, less those listed here.
+  const suggestOther = (text) => rankSuggestions(text, withoutNames(tool.vendors, listed()), withoutNames(instrument.all_vendors, listed()));
 
   const names = h('div', { class: 'chips tool__names' });
   const typeahead = createTypeahead({ id, label: roster.options[0].text, suggest, onPick: add });
@@ -103,7 +105,7 @@ function toolCard(tool, sectionCode, app) {
     for (const { input } of kinds) input.checked = input.value === kind;
     if (about?.first !== now[0]) {
       about?.el.remove();
-      about = now.length > 0 ? aboutPart(now[0], scope, suggest, app) : null;
+      about = now.length > 0 ? aboutPart(now[0], scope, suggestOther, app) : null;
       if (about) card.append(about.el);
     }
     if (about) about.note.hidden = now.length < 2;
