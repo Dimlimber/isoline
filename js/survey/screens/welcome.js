@@ -5,7 +5,7 @@ import { frame } from './frame.js';
 const RULES = [
   'There are no right answers. Nothing here is marked as better or worse, and more AI is not the goal.',
   'Answer for how things are today, not how they are meant to be.',
-  'If you do not know, say so. You can also skip any question.',
+  'If you do not know, say so. You can skip any question, apart from one written answer.',
   'Nobody at your company sees who said what.',
   'Your answers save as you go. You can stop and come back on this device.'
 ];

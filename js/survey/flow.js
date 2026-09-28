@@ -47,15 +47,16 @@ export function selectedSections(instrument, state) {
     .map((section) => section.code);
 }
 
-// The screens for this person, in the order they are asked.
-export function buildFlow(instrument, state, { maxQuestionsPerScreen = 4, requiredPrompts = 1 } = {}) {
+// The screens for this person, in the order they are asked. minPromptLength is the shortest written answer to a prompt.
+export function buildFlow(instrument, state, { maxQuestionsPerScreen = 4, requiredPrompts = 1, minPromptLength = 20 } = {}) {
   const screens = [
     welcomeScreen(),
     ...startScreens(instrument, state, maxQuestionsPerScreen),
     ...chosenSectionScreens(instrument, state, maxQuestionsPerScreen),
     endScreen()
   ];
-  return settlePrompts(instrument, screens, requiredPrompts);
+  const written = Object.keys(instrument.prompts).filter((id) => longEnough(state.answers[id], minPromptLength)).length;
+  return settlePrompts(instrument, screens, requiredPrompts, written);
 }
 
 // The question objects of a questions screen whose conditions hold now.
@@ -234,14 +235,16 @@ function leadOf(instrument, id, ids) {
   return clause?.q;
 }
 
-// The first `requiredPrompts` prompt screens are required and timed; the others are optional.
-function settlePrompts(instrument, screens, requiredPrompts) {
+// A person owes `requiredPrompts` written answers, wherever they wrote them. The first `requiredPrompts` prompt screens
+// are timed. They are also required while fewer prompts than that hold a written answer; once enough do, no prompt is,
+// so that adding or removing a section later never asks for another. Every other prompt is optional.
+function settlePrompts(instrument, screens, requiredPrompts, written) {
   let count = 0;
   return screens.map((screen) => {
     if (screen.kind !== 'prompt') return screen;
     count += 1;
-    const required = count <= requiredPrompts;
-    return { ...screen, required, seconds: required ? instrument.timing.prompt : 0 };
+    const timed = count <= requiredPrompts;
+    return { ...screen, required: timed && written < requiredPrompts, seconds: timed ? instrument.timing.prompt : 0 };
   });
 }
 
