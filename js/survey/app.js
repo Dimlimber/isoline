@@ -91,6 +91,20 @@ export function createApp({ root, instrument, store, config }) {
     app.lastSend = submitter.send({ ...store.exportAnswers(), kind });
   }
 
+  // Arriving at the finish sends the answers once per set of answers, so a reload there adds nothing.
+  // When they are those of the last final send that was sent or queued, app.lastSend keeps how that send went.
+  // The fingerprint is taken before sending, since the answers can change while the send is on its way.
+  function sendFinal() {
+    const mark = store.answersMark();
+    const last = store.lastFinal();
+    if (last?.mark === mark) {
+      app.lastSend = Promise.resolve(last.outcome);
+      return;
+    }
+    send('final');
+    app.lastSend.then((outcome) => store.markFinal(mark, outcome));
+  }
+
   function back() {
     if (app.index > 0) moveTo(app.index - 1);
   }
@@ -125,7 +139,7 @@ export function createApp({ root, instrument, store, config }) {
     app.index = index;
     app.screen = app.flow[index];
     store.setPosition(app.screen.id);
-    if (app.screen.kind === 'end') send('final');
+    if (app.screen.kind === 'end') sendFinal();
     const view = (SCREENS[app.screen.kind] || unbuilt).render(app.screen, app);
     view.classList.add('screen-enter');
     mount(main, view);

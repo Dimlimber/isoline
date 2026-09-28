@@ -2,6 +2,8 @@
 import { ALPHABET } from './company.js';
 
 const ID_LENGTH = 10;
+const FNV_OFFSET = 0x811c9dc5;
+const FNV_PRIME = 0x01000193;
 
 // A store for the survey state, kept in `storage` under `key`.
 export function createStore(storage, { key = 'isoline.survey.v1', now = () => new Date().toISOString(), random = Math.random, instrumentVersion = '' } = {}) {
@@ -79,6 +81,23 @@ export function createStore(storage, { key = 'isoline.survey.v1', now = () => ne
       return state?.done[screenId] === true;
     },
 
+    // A short fingerprint of the answers as they are now, to tell one set of answers from another.
+    answersMark() {
+      return state ? fingerprint(JSON.stringify(state.answers)) : null;
+    },
+
+    // The last final send that was sent or queued, as { mark, outcome }, where mark is the fingerprint of its answers.
+    lastFinal() {
+      return state?.final ?? null;
+    },
+
+    // Records a final send of the answers with this fingerprint, and how it went. With sending off nothing is recorded,
+    // so that the first visit to the finish once a collection point is set still sends.
+    markFinal(mark, outcome) {
+      if (outcome === 'off') return;
+      change((s) => { s.final = { mark, outcome }; });
+    },
+
     // Calls fn(state) after every change; returns a function that stops it.
     subscribe(fn) {
       listeners.add(fn);
@@ -105,6 +124,15 @@ export function createStore(storage, { key = 'isoline.survey.v1', now = () => ne
       notify();
     }
   };
+}
+
+// A short fingerprint of a text, the same for the same text: FNV-1a over its UTF-16 code units, 32 bits, in base 36.
+export function fingerprint(text) {
+  let hash = FNV_OFFSET;
+  for (let i = 0; i < text.length; i += 1) {
+    hash = Math.imul(hash ^ text.charCodeAt(i), FNV_PRIME) >>> 0;
+  }
+  return hash.toString(36);
 }
 
 // The stored state, or null when nothing usable is stored.
