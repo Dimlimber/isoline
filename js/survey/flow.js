@@ -4,7 +4,8 @@ import { isSkipped, hasValue, isSettled, resolveKey, holds } from './conditions.
 
 const SCREENER = 'CORE.14';
 const SPEAKS_TO = [1, 2, 3];
-const FIT_ASKED = [2, 3, 4, 5, 6];
+// The ways of doing a job that are followed by the question of the right amount of AI.
+export const FIT_ASKED = [2, 3, 4, 5, 6];
 const CARD = ['TC.1', 'TC.2', 'TC.3'];
 const PICKED_A_JOB = [{ q: 'STD.BACK', any: true }];
 const SECONDS = { welcome: 5, intro: 5, end: 5, back: 12, result: 12, perJob: 17, perTool: 25 };

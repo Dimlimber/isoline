@@ -5,12 +5,9 @@
 import { h } from '../dom.js';
 import { getSection, jobText } from '../lookup.js';
 import { routes } from '../conditions.js';
-import { merged } from '../flow.js';
+import { FIT_ASKED, merged } from '../flow.js';
 import { idFor } from '../fields/field.js';
 import { frame } from './frame.js';
-
-// The ways of doing a job that are followed by the question of the right amount of AI, as in flow.js.
-const FIT_ASKED = [2, 3, 4, 5, 6];
 
 export function render(screen, app) {
   const { instrument, store } = app;
