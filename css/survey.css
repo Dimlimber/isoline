@@ -104,3 +104,24 @@ button.opt:disabled > .opt__mark, button.opt:disabled > .opt__text { opacity: .3
 .panel__actions .btn { align-self: auto; margin-top: 0; }
 .panel .note + .panel__actions { margin-top: 0; }
 .start { padding-bottom: clamp(56px, 8vw, 112px); }
+
+/* Tools */
+.tool .chips { margin-top: var(--s-3); }
+.tool__names { margin-bottom: var(--s-3); }
+.tool__more { margin-top: var(--s-5); padding-top: var(--s-5); border-top: 1px solid var(--line); }
+.tool__more > .label { display: block; margin-bottom: var(--s-5); }
+.tool__more .field + .field { margin-top: var(--s-6); }
+.tool__more .field__label { font-size: 17px; }
+.tool.is-missing { border-color: var(--accent); position: relative; z-index: 1; }
+/* Beyond the brief's rules for Task 6, each needed for what the tools screen showed in the browser:
+   a card whose list is open sits above the next card, which a missing mark would otherwise raise over the list;
+   the note about the first name keeps the same space from the first question as the label keeps from it;
+   the box, closed once five names are listed, looks unavailable, as a disabled button does;
+   on a phone, a choice too long for the width wraps inside its segment, and the segments stack as the main-one choice does. */
+.tool:has(.ta__list:not([hidden])) { position: relative; z-index: 2; }
+.tool__more > .note { margin-bottom: var(--s-5); }
+.ta .input:disabled { opacity: .3; pointer-events: none; }
+@media (max-width: 640px) {
+  .tool__more .seg__item { flex-basis: 100%; min-width: 0; }
+  .tool__more .seg__item span { height: auto; min-height: 44px; padding-block: 10px; white-space: normal; text-align: center; }
+}
