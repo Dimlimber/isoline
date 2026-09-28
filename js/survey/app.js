@@ -1,6 +1,7 @@
 // The survey page: the top bar, the progress rail, one screen at a time, and moving between screens.
 import { clear, h, mount } from './dom.js';
 import { buildFlow, firstIncomplete, isScreenComplete, missing, railItems } from './flow.js';
+import { createSubmitter } from './submit.js';
 import { minutes, remainingSeconds } from './timing.js';
 import { frame } from './screens/frame.js';
 import * as welcome from './screens/welcome.js';
@@ -22,7 +23,10 @@ const unbuilt = {
 // Draws the shell and the current screen; returns the app object that every screen and field is given.
 export function createApp({ root, instrument, store, config }) {
   const options = { minPromptLength: config.minPromptLength };
-  const app = { instrument, store, config, flow: [], index: 0, screen: null, next, back, go, goTo, changed };
+  const app = { instrument, store, config, flow: [], index: 0, screen: null, lastSend: null, next, back, go, goTo, changed };
+  // Nothing is sent unless config.endpoint is set. What could not be sent waits on this device and is tried again on opening.
+  const submitter = createSubmitter({ endpoint: config.endpoint, fetch: window.fetch.bind(window), storage: window.localStorage, queueKey: config.queueKey });
+  submitter.flush();
 
   const rail = h('nav', { class: 'shell__rail', id: 'survey-rail', 'aria-label': 'Sections' });
   const main = h('main', { class: 'shell__main' });
@@ -56,7 +60,21 @@ export function createApp({ root, instrument, store, config }) {
     if (DONE_ON_CONTINUE.includes(screen.kind)) store.markDone(screen.id);
     const open = SCREENS[screen.kind] ? missing(instrument, screen, store.state, options) : [];
     if (open.length > 0) showMissing(open);
-    else if (app.index < app.flow.length - 1) moveTo(app.index + 1);
+    else if (app.index < app.flow.length - 1) {
+      if (endsPart()) send('progress');
+      moveTo(app.index + 1);
+    }
+  }
+
+  // A section's tools, or the last screen of a block: leaving it with Continue sends the answers so far.
+  function endsPart() {
+    const { screen, flow, index } = app;
+    return screen.kind === 'tools' || (screen.railKey.endsWith(':block') && flow[index + 1].railKey !== screen.railKey);
+  }
+
+  // Sends the answers so far. app.lastSend keeps the outcome ('off', 'sent' or 'queued') for the finish screen.
+  function send(kind) {
+    app.lastSend = submitter.send({ ...store.exportAnswers(), kind });
   }
 
   function back() {
@@ -92,6 +110,7 @@ export function createApp({ root, instrument, store, config }) {
     app.index = index;
     app.screen = app.flow[index];
     store.setPosition(app.screen.id);
+    if (app.screen.kind === 'end') send('final');
     const view = (SCREENS[app.screen.kind] || unbuilt).render(app.screen, app);
     view.classList.add('screen-enter');
     mount(main, view);
@@ -120,6 +139,7 @@ export function createApp({ root, instrument, store, config }) {
     const seconds = remainingSeconds(app.flow, complete);
     const n = minutes(seconds);
     time.textContent = seconds < 60 ? 'Almost done' : `About ${n} ${n === 1 ? 'minute' : 'minutes'} left`;
+    time.hidden = app.screen.kind === 'end';
     const share = Math.round((100 * Object.keys(complete).length) / app.flow.length);
     fill.style.width = `${share}%`;
     bar.setAttribute('aria-valuenow', String(share));
