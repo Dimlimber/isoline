@@ -5,6 +5,7 @@ import { createStore } from './survey/store.js';
 import { decodeInvite, newCompanyCode, normalizeCode } from './survey/company.js';
 
 const SURVEY = 'survey.html';
+const BLOCKED = 'This browser does not let the survey save answers on this device. Allow site data for this site, or use another browser.';
 const root = document.getElementById('start');
 const store = createStore(deviceStorage(), { key: config.storageKey });
 
@@ -77,7 +78,7 @@ function invitedPanel(invite, saved) {
     h('p', {}, 'A colleague invited you. You will be asked about the parts of marketing you know.'),
     other ? h('p', { class: 'note' }, `This device holds answers for ${other}. Beginning here removes them.`) : null,
     other ? h('a', { class: 'btn btn--quiet', href: SURVEY }, `Continue for ${other}`) : null,
-    row(h('button', { class: 'btn btn--primary', type: 'button', onClick: () => begin(company) }, 'Begin')));
+    row(h('button', { class: 'btn btn--primary', type: 'button', onClick: (event) => begin(company, event.currentTarget) }, 'Begin')));
 }
 
 // Nothing saved and no invitation: start for a company, or join one with its code. Returns the company name input.
@@ -89,10 +90,10 @@ function showStart() {
     label: 'Company name',
     attrs: { autocomplete: 'organization', maxlength: '200' },
     button: h('button', { class: 'btn btn--primary', type: 'submit' }, 'Start'),
-    submit: (text) => {
+    submit: (text, button) => {
       const name = text.trim();
       if (name.length < 2) return 'Enter your company\'s name.';
-      begin({ code: newCompanyCode(), name, owner: true, facts: {} });
+      begin({ code: newCompanyCode(), name, owner: true, facts: {} }, button);
       return null;
     }
   });
@@ -103,10 +104,10 @@ function showStart() {
     label: 'Company code',
     attrs: { placeholder: 'XXXX-XXXX', autocapitalize: 'characters', autocomplete: 'off', spellcheck: 'false' },
     button: h('button', { class: 'btn', type: 'submit' }, 'Join'),
-    submit: (text) => {
+    submit: (text, button) => {
       const code = normalizeCode(text);
       if (!code) return 'That code does not look right. It has eight letters and numbers.';
-      begin({ code, name: '', owner: false, facts: {} });
+      begin({ code, name: '', owner: false, facts: {} }, button);
       return null;
     }
   });
@@ -115,7 +116,7 @@ function showStart() {
 }
 
 // A panel that is a form: a heading, a line about it, one labelled input, and a button that also answers to Enter.
-// submit(text) acts on the text, or returns what is wrong with it, which shows above the button and is announced.
+// submit(text, button) acts on the text, or returns what is wrong with it, which shows above the button and is announced.
 function formPanel({ id, heading, about, label, attrs, button, submit }) {
   const input = h('input', { class: 'input', type: 'text', id, ...attrs });
   const form = h('form', { class: 'panel', onSubmit },
@@ -129,7 +130,9 @@ function formPanel({ id, heading, about, label, attrs, button, submit }) {
   function onSubmit(event) {
     event.preventDefault();
     form.querySelector('.error')?.remove();
-    const problem = submit(input.value);
+    input.removeAttribute('aria-invalid');
+    input.removeAttribute('aria-describedby');
+    const problem = submit(input.value, button);
     if (!problem) return;
     const error = h('p', { class: 'error', id: `${id}-error`, role: 'alert' }, problem);
     button.before(error);
@@ -144,10 +147,15 @@ function row(...buttons) {
   return h('div', { class: 'panel__actions' }, buttons);
 }
 
-// Saves the new start on this device and opens the survey.
-function begin(company) {
-  store.start(company);
-  window.location.assign(SURVEY);
+// Saves the new start on this device and opens the survey. When the browser does not let the survey save, the survey
+// could keep no answer: the page stays, and says so above the button that was pressed.
+function begin(company, button) {
+  if (store.start(company)) {
+    window.location.assign(SURVEY);
+    return;
+  }
+  button.closest('.panel').querySelector('.error')?.remove();
+  (button.closest('.panel__actions') ?? button).before(h('p', { class: 'error', role: 'alert' }, BLOCKED));
 }
 
 // Local storage, or null where the browser blocks it.

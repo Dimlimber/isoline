@@ -47,6 +47,7 @@ export function createApp({ root, instrument, store, config }) {
   const rail = h('nav', { class: 'shell__rail', id: 'survey-rail', 'aria-label': 'Sections' });
   const main = h('main', { class: 'shell__main' });
   const time = h('span');
+  const keeping = h('span', { class: 'topbar__saved', role: 'status' });
   const menu = h('button', { class: 'btn btn--small topbar__menu', type: 'button', 'aria-controls': 'survey-rail', 'aria-expanded': 'false', onClick: () => openRail(!rail.classList.contains('is-open')) }, 'Sections');
   const fill = h('div', { class: 'bar__fill' });
   const bar = h('div', { class: 'bar', role: 'progressbar', 'aria-label': 'Progress', 'aria-valuemin': '0', 'aria-valuemax': '100' }, fill);
@@ -55,9 +56,18 @@ export function createApp({ root, instrument, store, config }) {
     h('header', { class: 'topbar' },
       h('div', { class: 'topbar__in' },
         h('a', { class: 'wordmark', href: 'index.html' }, 'Isoline'),
-        h('div', { class: 'topbar__meta' }, time, h('span', { class: 'topbar__saved' }, 'Saved on this device'), menu)),
+        h('div', { class: 'topbar__meta' }, time, keeping, menu)),
       bar),
     h('div', { class: 'shell__body' }, rail, main));
+
+  // Whether the answers are kept on this device, checked after every change. The words change only when that does,
+  // so a screen reader hears them once.
+  const showSaved = () => {
+    const text = store.saved ? 'Saved on this device' : 'Not saved on this device';
+    if (keeping.textContent !== text) keeping.textContent = text;
+  };
+  showSaved();
+  store.subscribe(showSaved);
 
   window.matchMedia(WIDE).addEventListener('change', (event) => {
     if (event.matches) openRail(false);

@@ -9,9 +9,14 @@ const FNV_PRIME = 0x01000193;
 // A store for the survey state, kept in `storage` under `key`.
 export function createStore(storage, { key = 'isoline.survey.v1', now = () => new Date().toISOString(), random = Math.random, instrumentVersion = '' } = {}) {
   let state = null;
+  // Whether the last write to storage worked; before any write, whether there is a storage to write to.
+  let saved = typeof storage?.setItem === 'function';
   const listeners = new Set();
 
-  const save = () => attempt(() => storage.setItem(key, JSON.stringify(state)));
+  const save = () => {
+    saved = attempt(() => storage.setItem(key, JSON.stringify(state)));
+    return saved;
+  };
   const notify = () => listeners.forEach((fn) => fn(state));
   const change = (apply) => {
     if (!state) return;
@@ -26,6 +31,11 @@ export function createStore(storage, { key = 'isoline.survey.v1', now = () => ne
       return state;
     },
 
+    // True while the answers are kept on this device: the last write to storage worked.
+    get saved() {
+      return saved;
+    },
+
     // True when a usable state was found in storage; it then becomes the current state.
     load() {
       const found = readState(storage, key);
@@ -33,7 +43,7 @@ export function createStore(storage, { key = 'isoline.survey.v1', now = () => ne
       return found !== null;
     },
 
-    // Starts a new state with a fresh respondent id, and saves it.
+    // Starts a new state with a fresh respondent id, and saves it. Returns whether it was stored.
     start({ code, name, owner, facts }) {
       const at = now();
       state = {
@@ -46,8 +56,9 @@ export function createStore(storage, { key = 'isoline.survey.v1', now = () => ne
         done: {},
         position: null
       };
-      save();
+      const stored = save();
       notify();
+      return stored;
     },
 
     // Takes from an invitation for the same company what the saved company lacks: every fact it has no value for,
@@ -143,7 +154,7 @@ export function createStore(storage, { key = 'isoline.survey.v1', now = () => ne
     // Forgets the state, here and in storage.
     reset() {
       state = null;
-      attempt(() => storage.removeItem(key));
+      saved = attempt(() => storage.removeItem(key));
       notify();
     }
   };
@@ -186,11 +197,12 @@ function respondentId(random) {
   return `r_${chars.join('')}`;
 }
 
-// Storage may be blocked or full: the survey then carries on in memory.
+// Storage may be blocked or full: the survey then carries on in memory. True when fn worked.
 function attempt(fn) {
   try {
     fn();
+    return true;
   } catch {
-    // Nothing to do: the state is still held in memory.
+    return false;
   }
 }
