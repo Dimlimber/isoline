@@ -85,3 +85,22 @@ button.opt:disabled > .opt__mark, button.opt:disabled > .opt__text { opacity: .3
   .field__help + .seg > .seg__item { flex-basis: 100%; min-width: 0; }
   .field__help + .seg > .seg__item span { height: auto; min-height: 44px; padding-block: 10px; white-space: normal; text-align: center; }
 }
+
+/* Start and finish */
+.end__part { max-width: var(--measure); padding: var(--s-6) 0; border-top: 1px solid var(--line); }
+.end__part > .h3 { margin-bottom: var(--s-4); }
+.end__part .btn { margin-top: var(--s-4); }
+.end__part .input { margin-top: var(--s-4); font-size: 14px; color: var(--ink-2); }
+.end__part .note { margin-top: var(--s-3); }
+.panel label { display: block; margin-top: var(--s-5); font-size: 14px; color: var(--ink-2); }
+.panel .input { margin-top: var(--s-2); margin-bottom: var(--s-5); }
+.panel .error, .panel .note { margin-bottom: var(--s-4); }
+.panel p { margin-top: var(--s-3); }
+.panels + .note { margin-top: var(--s-5); }
+/* Beyond the brief's rules: the given ones leave the buttons at the foot of a single panel touching the text above and each other.
+   They sit in a row, as in the survey's navigation, a step below the text and close under a note that speaks of them.
+   The start page ends with what start.js draws, so that holds the space above the footer that other pages get from their last section. */
+.panel__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4) var(--s-5); margin-top: var(--s-5); }
+.panel__actions .btn { align-self: auto; margin-top: 0; }
+.panel .note + .panel__actions { margin-top: 0; }
+.start { padding-bottom: clamp(56px, 8vw, 112px); }
