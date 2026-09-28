@@ -223,7 +223,7 @@ export function createApp({ root, instrument, store, config }) {
       group.items.map((item) => railItem(item, complete, first)))));
   }
 
-  // An item that can be gone to is a button: a done item leads to its first screen, and the item that holds the first
+  // An item the person can go to is a button: a done item leads to its first screen, and the item that holds the first
   // screen not yet complete leads to that screen. Items beyond it are plain text.
   function railItem(item, complete, first) {
     const done = app.flow.slice(item.first, item.last + 1).every((screen) => complete[screen.id]);

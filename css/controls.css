@@ -34,6 +34,8 @@
 .opt--optout + .opt--optout { margin-top: -1px; }
 .opt--optout .opt__text { color: var(--ink-2); }
 .opt__extra { margin: var(--s-3) 0 var(--s-4) 28px; }
+/* A long list: one list within the measure, and from 1024 px two columns of equal width that overlap by a hairline,
+   so that where they meet the line is single. */
 .opts--cols { max-width: var(--measure); }
 .opts__col { display: flex; flex-direction: column; }
 .opts__col + .opts__col { margin-top: -1px; }
