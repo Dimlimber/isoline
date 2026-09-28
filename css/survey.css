@@ -1,4 +1,5 @@
-.shell { min-height: 100vh; display: flex; flex-direction: column; }
+/* --topbar is the height of the top bar with its hairline. Below 1024 px the progress bar makes it taller. */
+.shell { --topbar: 65px; min-height: 100vh; display: flex; flex-direction: column; }
 .topbar { position: sticky; top: 0; z-index: 20; background: var(--paper); border-bottom: 1px solid var(--line); }
 .topbar__in { display: flex; align-items: center; justify-content: space-between; gap: var(--s-5); height: 64px; padding-inline: var(--gutter); }
 .topbar__meta { display: flex; align-items: center; gap: var(--s-5); font-size: 13px; color: var(--ink-2); }
@@ -7,7 +8,7 @@
 .topbar .bar { display: none; }
 
 .shell__body { flex: 1; display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); }
-.shell__rail { position: sticky; top: 65px; align-self: start; height: calc(100vh - 65px); overflow: auto; padding: var(--s-7) var(--s-5) var(--s-7) var(--gutter); border-right: 1px solid var(--line); }
+.shell__rail { position: sticky; top: var(--topbar); align-self: start; height: calc(100vh - var(--topbar)); overflow: auto; padding: var(--s-7) var(--s-5) var(--s-7) var(--gutter); border-right: 1px solid var(--line); }
 .shell__main { min-width: 0; padding: var(--s-8) var(--gutter) var(--s-10) clamp(24px, 6vw, 96px); }
 
 .screen { max-width: 980px; }
@@ -27,9 +28,10 @@
 .rules li::before { content: counter(rule, decimal-leading-zero); padding-top: 5px; font-size: 11px; font-weight: 500; letter-spacing: .09em; color: var(--ink-2); }
 
 @media (max-width: 1023px) {
+  .shell { --topbar: 67px; }
   .shell__body { grid-template-columns: 1fr; }
   .shell__rail { display: none; }
-  .shell__rail.is-open { display: block; position: fixed; inset: 65px 0 0 0; z-index: 15; height: auto; padding: var(--s-6) var(--gutter); border: 0; background: var(--paper); }
+  .shell__rail.is-open { display: block; position: fixed; inset: var(--topbar) 0 0 0; z-index: 15; height: auto; padding: var(--s-6) var(--gutter); border: 0; background: var(--paper); }
   .topbar__menu { display: inline-flex; }
   .topbar .bar { display: block; }
   .topbar__saved { display: none; }
@@ -127,6 +129,13 @@ button.opt:disabled > .opt__mark, button.opt:disabled > .opt__text { opacity: .3
 .gridq--jobs thead th { width: 8%; }
 .gridq__sub > td { padding-top: var(--s-3); }
 [data-key] { scroll-margin-top: var(--s-9); }
+/* The header row of the jobs table stays in view under the top bar while the table scrolls under it, on the table's
+   surface and above the rows and their segments. The table draws its borders cell by cell, since only then does a cell
+   that stays in view take its hairlines along; the last row's hairline closes the table at the bottom.
+   A radio reached with the keyboard is scrolled clear of the header, which would otherwise hide it. */
+.gridq--jobs { border-collapse: separate; border-bottom: 0; }
+.gridq--jobs thead > tr > * { position: sticky; top: var(--topbar); z-index: 4; background: var(--surface); }
+.gridq--jobs td input { scroll-margin-top: calc(var(--topbar) + var(--s-9)); }
 
 /* Tools */
 .tool .chips { margin-top: var(--s-3); }
