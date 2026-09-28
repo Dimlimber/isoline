@@ -67,6 +67,13 @@ export function createStore(storage, { key = 'isoline.survey.v1', now = () => ne
       change((s) => { s.done[screenId] = true; });
     },
 
+    // Records which version of the instrument the answers were given against.
+    // The same version again writes nothing, so opening the survey does not move the updated time.
+    setInstrument(version) {
+      if (state?.instrument === version) return;
+      change((s) => { s.instrument = version; });
+    },
+
     // True when the screen was marked done.
     isDone(screenId) {
       return state?.done[screenId] === true;
@@ -78,8 +85,9 @@ export function createStore(storage, { key = 'isoline.survey.v1', now = () => ne
       return () => { listeners.delete(fn); };
     },
 
-    // The answers to send or keep: the company, the person and the answers, and nothing else.
+    // The answers to send or keep: the company, the person and the answers, and nothing else. Null with no state.
     exportAnswers() {
+      if (!state) return null;
       return {
         v: state.v,
         instrument: state.instrument,

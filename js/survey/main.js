@@ -20,6 +20,8 @@ async function open() {
     mount(root, h('p', { class: 'wrap', style: 'padding-block:48px' }, 'The survey could not load. Check your connection and reload the page.'));
     return;
   }
+  // The start page cannot know the version, since it does not load the instrument; the answers carry it from here.
+  store.setInstrument(instrument.version);
   createApp({ root, instrument, store, config });
 }
 
