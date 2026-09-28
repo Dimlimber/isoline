@@ -3,11 +3,13 @@ import { config } from './config.js';
 import { h } from './survey/dom.js';
 import { createStore } from './survey/store.js';
 import { decodeInvite, newCompanyCode, normalizeCode } from './survey/company.js';
+import { queueLength } from './survey/submit.js';
 
 const SURVEY = 'survey.html';
 const BLOCKED = 'This browser does not let the survey save answers on this device. Allow site data for this site, or use another browser.';
 const root = document.getElementById('start');
-const store = createStore(deviceStorage(), { key: config.storageKey });
+const storage = deviceStorage();
+const store = createStore(storage, { key: config.storageKey });
 
 render();
 // An invitation pasted into the address bar changes only the fragment, which does not load the page again.
@@ -53,8 +55,12 @@ function continuePanel(state) {
   }
 
   // Asks before the answers go. Focus lands on keeping them, so a key held down removes nothing.
+  // Answers that wait to be sent stay in their queue, and the note says so.
   function askFirst() {
-    const note = h('p', { class: 'note', id: 'start-again-note' }, 'This removes the answers saved on this device.');
+    const waiting = queueLength(storage, config.queueKey) > 0;
+    const note = h('p', { class: 'note', id: 'start-again-note' }, waiting
+      ? 'This removes the answers saved on this device. Answers waiting to be sent will still be sent.'
+      : 'This removes the answers saved on this device.');
     const remove = h('button', { class: 'btn', type: 'button', 'aria-describedby': note.id, onClick: removeAll }, 'Remove and start again');
     const keep = h('button', { class: 'btn btn--quiet', type: 'button', onClick: () => offer().focus() }, 'Keep my answers');
     actions.replaceChildren(note, row(remove, keep));
