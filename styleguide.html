@@ -1015,6 +1015,124 @@ main > section { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr
   <hr class="rule">
 
   <section>
+    <h2 class="label">Tool card</h2>
+    <div class="card tool" role="group" aria-labelledby="sg-tool-ask">
+      <div class="card__head">
+        <h3 class="h3" id="sg-tool-ask">What is your CRM?</h3>
+      </div>
+      <div class="measure">
+        <div class="chips tool__names">
+          <span class="chip is-on">HubSpot<button class="chip__x" type="button" aria-label="Remove HubSpot">&times;</button></span>
+          <span class="chip is-on">Salesforce<button class="chip__x" type="button" aria-label="Remove Salesforce">&times;</button></span>
+        </div>
+        <div class="ta">
+          <label class="visually-hidden" id="sg-tool-label" for="sg-tool">Type the name of the tool</label>
+          <input class="input" id="sg-tool" type="text" maxlength="200" autocomplete="off" placeholder="Type a name" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sg-tool-list" aria-labelledby="sg-tool-label">
+          <ul class="ta__list" id="sg-tool-list" role="listbox" aria-labelledby="sg-tool-label" tabindex="-1" hidden></ul>
+        </div>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="sg-tool-kind" value="inhouse"><span>Built in-house</span></label>
+          <label class="chip"><input type="radio" name="sg-tool-kind" value="agency"><span>Our agency's or partner's tool</span></label>
+          <label class="chip"><input type="radio" name="sg-tool-kind" value="manual"><span>Spreadsheets and manual work</span></label>
+          <label class="chip"><input type="radio" name="sg-tool-kind" value="none"><span>We do not do this</span></label>
+          <label class="chip chip--optout"><input type="radio" name="sg-tool-kind" value="unknown"><span>I do not know</span></label>
+        </div>
+      </div>
+      <div class="tool__more">
+        <h4 class="label">About HubSpot</h4>
+        <p class="note">These questions are about HubSpot, the first one you named.</p>
+        <div class="field">
+          <fieldset>
+            <legend class="field__label">Which of these jobs do you use it for?</legend>
+            <div class="field__body">
+              <div class="chips">
+                <label class="chip"><input type="checkbox" name="sg-tool-jobs" value="CON.3.J1" checked><span>Generate leads (content, events, paid, outbound)</span></label>
+                <label class="chip"><input type="checkbox" name="sg-tool-jobs" value="CON.3.J2"><span>Enrich leads and accounts with data</span></label>
+                <label class="chip"><input type="checkbox" name="sg-tool-jobs" value="CON.3.J3"><span>Score and prioritize leads</span></label>
+                <label class="chip"><input type="checkbox" name="sg-tool-jobs" value="CON.3.J4"><span>Route leads to the right person</span></label>
+                <label class="chip"><input type="checkbox" name="sg-tool-jobs" value="CON.3.J5"><span>Follow up with new leads (first response)</span></label>
+                <label class="chip"><input type="checkbox" name="sg-tool-jobs" value="CON.3.J6" checked><span>Nurture leads that are not ready</span></label>
+                <label class="chip"><input type="checkbox" name="sg-tool-jobs" value="CON.3.J7"><span>Book meetings</span></label>
+                <label class="chip"><input type="checkbox" name="sg-tool-jobs" value="CON.3.J8"><span>Report pipeline sourced and influenced</span></label>
+              </div>
+            </div>
+            <div class="field__foot">
+              <button class="btn btn--quiet" type="button">Skip this question</button>
+            </div>
+          </fieldset>
+        </div>
+        <div class="field">
+          <fieldset>
+            <legend class="field__label">If the decision were yours today, would you choose it again?</legend>
+            <div class="field__body">
+              <div class="seg">
+                <label class="seg__item"><input type="radio" name="sg-tool-again" value="1"><span>Yes, without hesitation</span></label>
+                <label class="seg__item"><input type="radio" name="sg-tool-again" value="2" checked><span>Yes, but I would look at alternatives first</span></label>
+                <label class="seg__item"><input type="radio" name="sg-tool-again" value="3"><span>Probably not</span></label>
+                <label class="seg__item"><input type="radio" name="sg-tool-again" value="4"><span>No</span></label>
+                <label class="seg__item seg__item--optout"><input type="radio" name="sg-tool-again" value="5"><span>I do not know</span></label>
+              </div>
+            </div>
+            <div class="field__foot">
+              <button class="btn btn--quiet" type="button">Skip this question</button>
+            </div>
+          </fieldset>
+        </div>
+        <div class="field">
+          <fieldset>
+            <legend class="field__label">Which of these are true?</legend>
+            <div class="field__body">
+              <div class="opts">
+                <label class="opt">
+                  <input class="opt__input" type="checkbox" name="sg-tool-true" value="1" checked>
+                  <span class="opt__mark"></span>
+                  <span class="opt__text">We started using it in the past 12 months</span>
+                </label>
+                <label class="opt">
+                  <input class="opt__input" type="checkbox" name="sg-tool-true" value="2">
+                  <span class="opt__mark"></span>
+                  <span class="opt__text">We are looking at alternatives</span>
+                </label>
+                <label class="opt">
+                  <input class="opt__input" type="checkbox" name="sg-tool-true" value="3">
+                  <span class="opt__mark"></span>
+                  <span class="opt__text">We have decided to replace it</span>
+                </label>
+                <label class="opt opt--optout">
+                  <input class="opt__input" type="checkbox" name="sg-tool-true" value="4">
+                  <span class="opt__mark"></span>
+                  <span class="opt__text">None of these</span>
+                </label>
+              </div>
+            </div>
+            <div class="field__foot">
+              <button class="btn btn--quiet" type="button">Skip this question</button>
+            </div>
+          </fieldset>
+        </div>
+        <div class="field">
+          <label class="field__label" for="sg-tool-replaced">What did it replace?</label>
+          <p class="field__help" id="sg-tool-replaced-help">Optional.</p>
+          <div class="field__body">
+            <div>
+              <div class="chips tool__names">
+                <span class="chip is-on">Pipedrive<button class="chip__x" type="button" aria-label="Remove Pipedrive">&times;</button></span>
+              </div>
+              <div class="ta">
+                <label class="visually-hidden" id="sg-tool-replaced-label" for="sg-tool-replaced">What did it replace?</label>
+                <input class="input" id="sg-tool-replaced" type="text" maxlength="200" autocomplete="off" placeholder="Type a name" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sg-tool-replaced-list" aria-labelledby="sg-tool-replaced-label" aria-describedby="sg-tool-replaced-help">
+                <ul class="ta__list" id="sg-tool-replaced-list" role="listbox" aria-labelledby="sg-tool-replaced-label" tabindex="-1" hidden></ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section>
     <h2 class="label">Notes</h2>
     <div class="stack--3">
       <p class="note">About 4 minutes. First how the work gets done, then a few facts and results. Tools come last.</p>
