@@ -6,6 +6,8 @@ import { frame } from './frame.js';
 
 // Rail groups that hold no part of marketing.
 const NOT_PARTS = ['Start', 'Finish'];
+// The end of the rail key of a job of marketing's closing block, which is not a section.
+const BLOCK = ':block';
 const COPIED_FOR = 2000;
 // Some browsers read the file after the click has returned, so the file is let go a little later.
 const RELEASE_AFTER = 10000;
@@ -27,12 +29,13 @@ export function render(screen, app) {
   });
 }
 
-// The rail items finished so far, by their names in the rail.
+// The sections finished so far, by their names in the rail.
 function covered(app) {
   const options = { minPromptLength: app.config.minPromptLength };
   const complete = (screen) => isScreenComplete(app.instrument, screen, app.store.state, options);
   const labels = railItems(app.flow)
-    .filter((item) => !NOT_PARTS.includes(item.group) && app.flow.slice(item.first, item.last + 1).every(complete))
+    .filter((item) => !NOT_PARTS.includes(item.group) && !item.key.endsWith(BLOCK))
+    .filter((item) => app.flow.slice(item.first, item.last + 1).every(complete))
     .map((item) => item.label);
   return h('section', { class: 'end__part' },
     h('h2', { class: 'h3' }, 'What you covered'),
