@@ -2,6 +2,7 @@
 import { clear, h, mount } from './dom.js';
 import { buildFlow, firstIncomplete, isScreenComplete, missing, railItems, railTarget } from './flow.js';
 import { createSubmitter } from './submit.js';
+import { createSending } from './sending.js';
 import { minutes, remainingSeconds } from './timing.js';
 import { frame } from './screens/frame.js';
 import * as welcome from './screens/welcome.js';
@@ -37,12 +38,22 @@ const unbuilt = {
 // Draws the shell and the current screen; returns the app object that every screen and field is given.
 export function createApp({ root, instrument, store, config }) {
   const options = { minPromptLength: config.minPromptLength };
-  const app = { instrument, store, config, flow: [], index: 0, screen: null, lastSend: null, next, back, go, goTo, changed, beforeLeave };
+  const app = {
+    instrument, store, config, flow: [], index: 0, screen: null, next, back, go, goTo, changed, beforeLeave,
+    // How the last send of the answers went, or will go, for the finish screen.
+    get lastSend() { return sending.last; }
+  };
   // Work that the screen in view hands over, to be done before it is left.
   let leaving = [];
-  // Nothing is sent unless config.endpoint is set. What could not be sent waits on this device and is tried again on opening.
-  const submitter = createSubmitter({ endpoint: config.endpoint, fetch: window.fetch.bind(window), storage: window.localStorage, queueKey: config.queueKey });
-  submitter.flush();
+  // Nothing is sent unless config.endpoint is set. What could not be sent waits on this device. It is tried again on
+  // opening, when the browser is back online, and once 30 seconds after a send that was queued.
+  const submitter = createSubmitter({
+    endpoint: config.endpoint, fetch: window.fetch.bind(window), storage: window.localStorage, queueKey: config.queueKey,
+    onSettle: (payload, outcome) => sending.settled(payload, outcome)
+  });
+  const sending = createSending({ store, submitter });
+  sending.flush();
+  window.addEventListener('online', () => sending.flush());
 
   const rail = h('nav', { class: 'shell__rail', id: 'survey-rail', 'aria-label': 'Sections' });
   const main = h('main', { class: 'shell__main' });
@@ -100,34 +111,15 @@ export function createApp({ root, instrument, store, config }) {
     const open = SCREENS[screen.kind] ? missing(instrument, screen, store.state, options) : [];
     if (open.length > 0) showMissing(open);
     else if (app.index < app.flow.length - 1) {
-      if (endsPart()) send('progress');
+      if (endsPart()) sending.send('progress');
       moveTo(screen.kind === 'screener' ? firstIncomplete(instrument, app.flow, store.state, options, app.index) : app.index + 1);
     }
   }
 
-  // A section's tools, or the last screen of a block: leaving it with Continue sends the answers so far.
+  // A section's tools, or the last screen of a block: leaving it with Continue sends the answers so far, once per set of answers.
   function endsPart() {
     const { screen, flow, index } = app;
     return screen.kind === 'tools' || (screen.railKey.endsWith(':block') && flow[index + 1].railKey !== screen.railKey);
-  }
-
-  // Sends the answers so far. app.lastSend keeps the outcome ('off', 'sent' or 'queued') for the finish screen.
-  function send(kind) {
-    app.lastSend = submitter.send({ ...store.exportAnswers(), kind });
-  }
-
-  // Arriving at the finish sends the answers once per set of answers, so a reload there adds nothing.
-  // When they are those of the last final send that was sent or queued, app.lastSend keeps how that send went.
-  // The fingerprint is taken before sending, since the answers can change while the send is on its way.
-  function sendFinal() {
-    const mark = store.answersMark();
-    const last = store.lastFinal();
-    if (last?.mark === mark) {
-      app.lastSend = Promise.resolve(last.outcome);
-      return;
-    }
-    send('final');
-    app.lastSend.then((outcome) => store.markFinal(mark, outcome));
   }
 
   function back() {
@@ -168,7 +160,8 @@ export function createApp({ root, instrument, store, config }) {
     app.index = index;
     app.screen = app.flow[index];
     store.setPosition(app.screen.id);
-    if (app.screen.kind === 'end') sendFinal();
+    // Arriving at the finish sends the answers, once per set of answers, so a reload there adds nothing.
+    if (app.screen.kind === 'end') sending.send('final');
     const view = (SCREENS[app.screen.kind] || unbuilt).render(app.screen, app);
     view.classList.add('screen-enter');
     mount(main, view);

@@ -18,6 +18,8 @@ export function createStore(storage, { key = 'isoline.survey.v1', now = () => ne
     return saved;
   };
   const notify = () => listeners.forEach((fn) => fn(state));
+  // A state saved when only final sends were marked keeps its mark under final.
+  const recorded = () => state?.lastSend ?? state?.final ?? null;
   const change = (apply) => {
     if (!state) return;
     apply(state);
@@ -119,16 +121,23 @@ export function createStore(storage, { key = 'isoline.survey.v1', now = () => ne
       return state ? fingerprint(JSON.stringify(state.answers)) : null;
     },
 
-    // The last final send that was sent or queued, as { mark, outcome }, where mark is the fingerprint of its answers.
-    lastFinal() {
-      return state?.final ?? null;
+    // The last send of any kind that was sent, queued or refused, as { mark, outcome }, where mark is the fingerprint
+    // of its answers.
+    lastSend() {
+      return recorded();
     },
 
-    // Records a final send of the answers with this fingerprint, and how it went. With sending off nothing is recorded,
-    // so that the first visit to the finish once a collection point is set still sends.
-    markFinal(mark, outcome) {
-      if (outcome === 'off') return;
-      change((s) => { s.final = { mark, outcome }; });
+    // Records a send of the answers with this fingerprint, and how it went, in place of any mark kept under final.
+    // The same again writes nothing. With sending off nothing is recorded, so that the first send once a collection
+    // point is set still goes.
+    markSend(mark, outcome) {
+      const last = recorded();
+      const same = last?.mark === mark && last.outcome === outcome && state.final === undefined;
+      if (outcome === 'off' || same) return;
+      change((s) => {
+        s.lastSend = { mark, outcome };
+        delete s.final;
+      });
     },
 
     // Calls fn(state) after every change; returns a function that stops it.

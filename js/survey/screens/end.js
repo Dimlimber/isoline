@@ -14,7 +14,8 @@ const RELEASE_AFTER = 10000;
 const SENDING = {
   off: 'Your answers are stored on this device.',
   sent: 'Your answers have been sent.',
-  queued: 'Your answers could not be sent. They are safe on this device, and we will try again next time you open this page.'
+  queued: 'Your answers could not be sent. They are safe on this device, and we will try again next time you open this page.',
+  refused: 'Your answers could not be sent. They are safe on this device. Use "Download my answers" to keep a copy.'
 };
 
 export function render(screen, app) {
@@ -107,9 +108,14 @@ function keep(app) {
   }
 }
 
-// How the last send went. It fills in when the send settles, and is announced then.
+// How the last send went. It fills in when the send settles, and is announced then. While the finish is on the page it
+// follows every change to the saved state, so answers that waited and have been sent since are said to be sent.
 function sending(app) {
   const note = h('p', { class: 'note', role: 'status' });
-  app.lastSend?.then((outcome) => { note.textContent = SENDING[outcome]; });
+  const show = () => app.lastSend?.then((outcome) => {
+    if (note.textContent !== SENDING[outcome]) note.textContent = SENDING[outcome];
+  });
+  show();
+  const stop = app.store.subscribe(() => (note.isConnected ? show() : stop()));
   return h('section', { class: 'end__part' }, note);
 }
