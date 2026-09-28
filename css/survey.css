@@ -47,3 +47,41 @@
 @media (max-width: 1023px) {
   .shell__rail.is-open { align-self: auto; }
 }
+
+.pick { border-top: 1px solid var(--line); }
+.pick__group > .label { display: block; padding: var(--s-6) 0 var(--s-3); }
+.pick__row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--s-5); align-items: center; padding: var(--s-4) 0; border-top: 1px solid var(--line); }
+.pick__row .small { margin-top: 2px; max-width: 56ch; }
+.pick__bar { position: sticky; bottom: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: var(--s-5); margin-top: var(--s-6); padding: var(--s-4) 0; border-top: 1px solid var(--ink); background: var(--paper); font-size: 15px; }
+.opt__mark--n { font-size: 11px; font-weight: 500; line-height: 1; }
+.opt__mark--n::after { display: none; }
+.gridq-blocks { display: none; }
+@media (max-width: 900px) {
+  .pick__row { grid-template-columns: 1fr; gap: var(--s-3); }
+}
+@media (max-width: 640px) {
+  .gridq--plain { display: none; }
+  .gridq-blocks { display: block; }
+  .gridq-blocks > * + * { margin-top: var(--s-5); }
+}
+
+/* Beyond the brief's rules for Task 4, each needed for what its fields showed in the browser:
+   rank rows are buttons, so their text lines up as in the other rows, a chosen row is outlined as a chosen option is,
+   focus shows above the neighbouring rows, and rows waiting behind the limit of two look unavailable;
+   a segment that wraps keeps single hairlines and a straight left edge;
+   while the rail takes its width, a self-screen row stacks until it is wide enough for its two columns;
+   the choice of the main one holds whole option texts, which on a narrow screen take a line each and wrap. */
+button.opt { text-align: left; }
+.opt[aria-pressed="true"] { border-color: var(--ink); z-index: 2; }
+.opt:focus-visible { z-index: 3; }
+button.opt:disabled { pointer-events: none; }
+button.opt:disabled > .opt__mark, button.opt:disabled > .opt__text { opacity: .3; }
+.seg { padding: 1px 0 0 1px; }
+.seg__item, .seg__item:first-child { margin: -1px 0 0 -1px; }
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .pick__row { grid-template-columns: 1fr; gap: var(--s-3); }
+}
+@media (max-width: 900px) {
+  .field__help + .seg > .seg__item { flex-basis: 100%; min-width: 0; }
+  .field__help + .seg > .seg__item span { height: auto; min-height: 44px; padding-block: 10px; white-space: normal; text-align: center; }
+}

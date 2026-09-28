@@ -6,10 +6,11 @@ import { frame } from './screens/frame.js';
 import * as welcome from './screens/welcome.js';
 import * as intro from './screens/intro.js';
 import * as questions from './screens/questions.js';
+import * as screener from './screens/screener.js';
 import * as end from './screens/end.js';
 
 // The module for each kind of screen. A later task adds a kind with one module and one line here.
-const SCREENS = { welcome, intro, questions, end };
+const SCREENS = { welcome, intro, questions, screener, end };
 // Screens that only inform are complete once the person continues past them.
 const DONE_ON_CONTINUE = ['welcome', 'intro', 'end'];
 const WIDE = '(min-width: 1024px)';

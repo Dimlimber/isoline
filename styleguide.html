@@ -373,6 +373,380 @@ main > section { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr
   <hr class="rule">
 
   <section>
+    <h2 class="label">Main choice</h2>
+    <div class="field">
+      <fieldset>
+        <legend class="field__label">How do customers buy from you?</legend>
+        <div class="field__body">
+          <div class="stack">
+            <div class="opts">
+              <label class="opt">
+                <input class="opt__input" type="checkbox" name="sg-main" value="1" checked>
+                <span class="opt__mark"></span>
+                <span class="opt__text" id="sg-main-1">Online, directly from us (website or app)</span>
+              </label>
+              <label class="opt">
+                <input class="opt__input" type="checkbox" name="sg-main" value="2">
+                <span class="opt__mark"></span>
+                <span class="opt__text" id="sg-main-2">In our own stores, branches or locations</span>
+              </label>
+              <label class="opt">
+                <input class="opt__input" type="checkbox" name="sg-main" value="3">
+                <span class="opt__mark"></span>
+                <span class="opt__text" id="sg-main-3">By subscription or sign-up they start themselves (software, media, membership)</span>
+              </label>
+              <label class="opt">
+                <input class="opt__input" type="checkbox" name="sg-main" value="4" checked>
+                <span class="opt__mark"></span>
+                <span class="opt__text" id="sg-main-4">Through our sales team (quotes, contracts, account managers)</span>
+              </label>
+              <label class="opt">
+                <input class="opt__input" type="checkbox" name="sg-main" value="5">
+                <span class="opt__mark"></span>
+                <span class="opt__text" id="sg-main-5">Through retailers, marketplaces or distributors we do not own</span>
+              </label>
+              <label class="opt">
+                <input class="opt__input" type="checkbox" name="sg-main" value="6">
+                <span class="opt__mark"></span>
+                <span class="opt__text" id="sg-main-6">Through agents, brokers, dealers or franchisees</span>
+              </label>
+            </div>
+            <div class="stack--3">
+              <p class="field__help" id="sg-main-main">Which one is the main one?</p>
+              <div class="seg" role="radiogroup" aria-labelledby="sg-main-main">
+                <label class="seg__item"><input type="radio" name="sg-main-main" value="1"><span>Online, directly from us (website or app)</span></label>
+                <label class="seg__item"><input type="radio" name="sg-main-main" value="4" checked><span>Through our sales team (quotes, contracts, account managers)</span></label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="field__foot">
+          <button class="btn btn--quiet" type="button">Skip this question</button>
+        </div>
+      </fieldset>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <h2 class="label">First and second choice</h2>
+    <div class="field">
+      <fieldset aria-describedby="sg-rank-help">
+        <legend class="field__label">When you evaluate a new tool now, what do you look at first?</legend>
+        <p class="field__help" id="sg-rank-help">Pick the first, then the second.</p>
+        <div class="field__body">
+          <div class="opts">
+            <button class="opt" type="button" aria-pressed="false" disabled>
+              <span class="opt__mark opt__mark--n"></span>
+              <span class="opt__text">Features against our list of needs</span>
+            </button>
+            <button class="opt" type="button" aria-pressed="true">
+              <span class="opt__mark opt__mark--n">2</span>
+              <span class="opt__text">Fit with our main suite</span>
+            </button>
+            <button class="opt" type="button" aria-pressed="false" disabled>
+              <span class="opt__mark opt__mark--n"></span>
+              <span class="opt__text">Whether our own data or warehouse can power it</span>
+            </button>
+            <button class="opt" type="button" aria-pressed="false" disabled>
+              <span class="opt__mark opt__mark--n"></span>
+              <span class="opt__text">Whether we could build it ourselves with AI</span>
+            </button>
+            <button class="opt" type="button" aria-pressed="true">
+              <span class="opt__mark opt__mark--n">1</span>
+              <span class="opt__text">Whether AI agents can operate it (connectors, open interfaces)</span>
+            </button>
+            <button class="opt" type="button" aria-pressed="false" disabled>
+              <span class="opt__mark opt__mark--n"></span>
+              <span class="opt__text">Price</span>
+            </button>
+          </div>
+        </div>
+        <div class="field__foot">
+          <button class="btn btn--quiet" type="button">Skip this question</button>
+        </div>
+      </fieldset>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <h2 class="label">Split to 100</h2>
+    <div class="field">
+      <fieldset aria-describedby="sg-split5-help">
+        <legend class="field__label">Roughly how is this year's marketing budget split?</legend>
+        <p class="field__help" id="sg-split5-help">The numbers must add to 100.</p>
+        <div class="field__body">
+          <div>
+            <div class="split">
+              <div class="split__row">
+                <label for="sg-split5-1">Working media</label>
+                <input class="input input--num" id="sg-split5-1" type="number" min="0" max="100" step="5" inputmode="numeric" value="40">
+              </div>
+              <div class="split__row">
+                <label for="sg-split5-2">Agencies and production</label>
+                <input class="input input--num" id="sg-split5-2" type="number" min="0" max="100" step="5" inputmode="numeric" value="20">
+              </div>
+              <div class="split__row">
+                <label for="sg-split5-3">Technology and data</label>
+                <input class="input input--num" id="sg-split5-3" type="number" min="0" max="100" step="5" inputmode="numeric" value="15">
+              </div>
+              <div class="split__row">
+                <label for="sg-split5-4">People (salaries)</label>
+                <input class="input input--num" id="sg-split5-4" type="number" min="0" max="100" step="5" inputmode="numeric" value="20">
+              </div>
+              <div class="split__row">
+                <label for="sg-split5-5">Other</label>
+                <input class="input input--num" id="sg-split5-5" type="number" min="0" max="100" step="5" inputmode="numeric" value="0">
+              </div>
+            </div>
+            <div class="split__total" role="status">
+              <span>Total</span>
+              <span>95 of 100</span>
+            </div>
+          </div>
+        </div>
+        <div class="field__foot">
+          <button class="btn btn--quiet" type="button">Skip this question</button>
+        </div>
+      </fieldset>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <h2 class="label">Choice per row</h2>
+    <div class="field field--wide">
+      <fieldset>
+        <legend class="field__label">How many people on your team could do each of these without help?</legend>
+        <div class="field__body">
+          <div>
+            <table class="gridq gridq--plain">
+              <thead>
+                <tr>
+                  <td></td>
+                  <th scope="col">No one</th>
+                  <th scope="col">One or two people</th>
+                  <th scope="col">About half</th>
+                  <th scope="col">Most of us</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row" id="sg-rows-r1">Write a prompt that reliably gives usable output</th>
+                  <td><label><input class="opt__input" type="radio" name="sg-rows-1" value="1" aria-label="No one" aria-describedby="sg-rows-r1"><span class="opt__mark"></span></label></td>
+                  <td><label><input class="opt__input" type="radio" name="sg-rows-1" value="2" checked aria-label="One or two people" aria-describedby="sg-rows-r1"><span class="opt__mark"></span></label></td>
+                  <td><label><input class="opt__input" type="radio" name="sg-rows-1" value="3" aria-label="About half" aria-describedby="sg-rows-r1"><span class="opt__mark"></span></label></td>
+                  <td><label><input class="opt__input" type="radio" name="sg-rows-1" value="4" aria-label="Most of us" aria-describedby="sg-rows-r1"><span class="opt__mark"></span></label></td>
+                </tr>
+                <tr>
+                  <th scope="row" id="sg-rows-r2">Check an AI result for errors</th>
+                  <td><label><input class="opt__input" type="radio" name="sg-rows-2" value="1" aria-label="No one" aria-describedby="sg-rows-r2"><span class="opt__mark"></span></label></td>
+                  <td><label><input class="opt__input" type="radio" name="sg-rows-2" value="2" aria-label="One or two people" aria-describedby="sg-rows-r2"><span class="opt__mark"></span></label></td>
+                  <td><label><input class="opt__input" type="radio" name="sg-rows-2" value="3" checked aria-label="About half" aria-describedby="sg-rows-r2"><span class="opt__mark"></span></label></td>
+                  <td><label><input class="opt__input" type="radio" name="sg-rows-2" value="4" aria-label="Most of us" aria-describedby="sg-rows-r2"><span class="opt__mark"></span></label></td>
+                </tr>
+                <tr>
+                  <th scope="row" id="sg-rows-r3">Connect a data source to a tool</th>
+                  <td><label><input class="opt__input" type="radio" name="sg-rows-3" value="1" checked aria-label="No one" aria-describedby="sg-rows-r3"><span class="opt__mark"></span></label></td>
+                  <td><label><input class="opt__input" type="radio" name="sg-rows-3" value="2" aria-label="One or two people" aria-describedby="sg-rows-r3"><span class="opt__mark"></span></label></td>
+                  <td><label><input class="opt__input" type="radio" name="sg-rows-3" value="3" aria-label="About half" aria-describedby="sg-rows-r3"><span class="opt__mark"></span></label></td>
+                  <td><label><input class="opt__input" type="radio" name="sg-rows-3" value="4" aria-label="Most of us" aria-describedby="sg-rows-r3"><span class="opt__mark"></span></label></td>
+                </tr>
+                <tr>
+                  <th scope="row" id="sg-rows-r4">Build a simple automated workflow</th>
+                  <td><label><input class="opt__input" type="radio" name="sg-rows-4" value="1" aria-label="No one" aria-describedby="sg-rows-r4"><span class="opt__mark"></span></label></td>
+                  <td><label><input class="opt__input" type="radio" name="sg-rows-4" value="2" aria-label="One or two people" aria-describedby="sg-rows-r4"><span class="opt__mark"></span></label></td>
+                  <td><label><input class="opt__input" type="radio" name="sg-rows-4" value="3" aria-label="About half" aria-describedby="sg-rows-r4"><span class="opt__mark"></span></label></td>
+                  <td><label><input class="opt__input" type="radio" name="sg-rows-4" value="4" aria-label="Most of us" aria-describedby="sg-rows-r4"><span class="opt__mark"></span></label></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="gridq-blocks">
+              <div class="stack--2">
+                <p id="sg-rows-b1">Write a prompt that reliably gives usable output</p>
+                <div class="seg" role="radiogroup" aria-labelledby="sg-rows-b1">
+                  <label class="seg__item"><input type="radio" name="sg-rows-1-narrow" value="1"><span>No one</span></label>
+                  <label class="seg__item"><input type="radio" name="sg-rows-1-narrow" value="2" checked><span>One or two people</span></label>
+                  <label class="seg__item"><input type="radio" name="sg-rows-1-narrow" value="3"><span>About half</span></label>
+                  <label class="seg__item"><input type="radio" name="sg-rows-1-narrow" value="4"><span>Most of us</span></label>
+                </div>
+              </div>
+              <div class="stack--2">
+                <p id="sg-rows-b2">Check an AI result for errors</p>
+                <div class="seg" role="radiogroup" aria-labelledby="sg-rows-b2">
+                  <label class="seg__item"><input type="radio" name="sg-rows-2-narrow" value="1"><span>No one</span></label>
+                  <label class="seg__item"><input type="radio" name="sg-rows-2-narrow" value="2"><span>One or two people</span></label>
+                  <label class="seg__item"><input type="radio" name="sg-rows-2-narrow" value="3" checked><span>About half</span></label>
+                  <label class="seg__item"><input type="radio" name="sg-rows-2-narrow" value="4"><span>Most of us</span></label>
+                </div>
+              </div>
+              <div class="stack--2">
+                <p id="sg-rows-b3">Connect a data source to a tool</p>
+                <div class="seg" role="radiogroup" aria-labelledby="sg-rows-b3">
+                  <label class="seg__item"><input type="radio" name="sg-rows-3-narrow" value="1" checked><span>No one</span></label>
+                  <label class="seg__item"><input type="radio" name="sg-rows-3-narrow" value="2"><span>One or two people</span></label>
+                  <label class="seg__item"><input type="radio" name="sg-rows-3-narrow" value="3"><span>About half</span></label>
+                  <label class="seg__item"><input type="radio" name="sg-rows-3-narrow" value="4"><span>Most of us</span></label>
+                </div>
+              </div>
+              <div class="stack--2">
+                <p id="sg-rows-b4">Build a simple automated workflow</p>
+                <div class="seg" role="radiogroup" aria-labelledby="sg-rows-b4">
+                  <label class="seg__item"><input type="radio" name="sg-rows-4-narrow" value="1"><span>No one</span></label>
+                  <label class="seg__item"><input type="radio" name="sg-rows-4-narrow" value="2"><span>One or two people</span></label>
+                  <label class="seg__item"><input type="radio" name="sg-rows-4-narrow" value="3"><span>About half</span></label>
+                  <label class="seg__item"><input type="radio" name="sg-rows-4-narrow" value="4"><span>Most of us</span></label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="field__foot">
+          <button class="btn btn--quiet" type="button">Skip this question</button>
+        </div>
+      </fieldset>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <h2 class="label">Jobs</h2>
+    <div class="field">
+      <fieldset>
+        <legend class="field__label">In the past 12 months, did you stop or cut back AI on any of these jobs?</legend>
+        <div class="field__body">
+          <div class="chips">
+            <label class="chip"><input type="checkbox" name="sg-jobs" value="CRE.2.J1"><span>Decide what content to make (the content calendar)</span></label>
+            <label class="chip"><input type="checkbox" name="sg-jobs" value="CRE.2.J2"><span>Write long-form content (articles, guides, reports)</span></label>
+            <label class="chip"><input type="checkbox" name="sg-jobs" value="CRE.2.J3"><span>Write short copy (ads, emails, social posts, notifications)</span></label>
+            <label class="chip"><input type="checkbox" name="sg-jobs" value="CRE.2.J4"><span>Write and update product descriptions and pages</span></label>
+            <label class="chip"><input type="checkbox" name="sg-jobs" value="CRE.2.J5"><span>Adapt content for different audiences or stages</span></label>
+            <label class="chip"><input type="checkbox" name="sg-jobs" value="CRE.2.J6"><span>Translate and localize</span></label>
+            <label class="chip"><input type="checkbox" name="sg-jobs" value="CRE.2.J7"><span>Turn one piece of content into other formats</span></label>
+            <label class="chip chip--optout"><input type="checkbox" name="sg-jobs" value="none" checked><span>No</span></label>
+          </div>
+        </div>
+        <div class="field__foot">
+          <button class="btn btn--quiet" type="button">Skip this question</button>
+        </div>
+      </fieldset>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <h2 class="label">One job</h2>
+    <div class="field">
+      <fieldset>
+        <legend class="field__label">Which job here most needs a better way of working?</legend>
+        <div class="field__body">
+          <div class="opts">
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-job" value="CRE.3.J1">
+              <span class="opt__mark"></span>
+              <span class="opt__text" id="sg-job-CRE.3.J1">Store, tag and find assets</span>
+            </label>
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-job" value="CRE.3.J2" checked>
+              <span class="opt__mark"></span>
+              <span class="opt__text" id="sg-job-CRE.3.J2">Track rights and usage limits (talent, music, licensed images)</span>
+            </label>
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-job" value="CRE.3.J3">
+              <span class="opt__mark"></span>
+              <span class="opt__text" id="sg-job-CRE.3.J3">Send assets to markets, channels, retailers and partners</span>
+            </label>
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-job" value="CRE.3.J4">
+              <span class="opt__mark"></span>
+              <span class="opt__text" id="sg-job-CRE.3.J4">Approve content (brand, legal, regulatory)</span>
+            </label>
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-job" value="CRE.3.J5">
+              <span class="opt__mark"></span>
+              <span class="opt__text" id="sg-job-CRE.3.J5">Check live content for brand and compliance problems</span>
+            </label>
+            <label class="opt">
+              <input class="opt__input" type="radio" name="sg-job" value="CRE.3.J6">
+              <span class="opt__mark"></span>
+              <span class="opt__text" id="sg-job-CRE.3.J6">Label or disclose AI-generated content</span>
+            </label>
+            <label class="opt opt--optout">
+              <input class="opt__input" type="radio" name="sg-job" value="none">
+              <span class="opt__mark"></span>
+              <span class="opt__text" id="sg-job-none">None of them</span>
+            </label>
+          </div>
+        </div>
+        <div class="field__foot">
+          <button class="btn btn--quiet" type="button">Skip this question</button>
+        </div>
+      </fieldset>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <h2 class="label">What you can speak to</h2>
+    <div>
+      <div class="pick">
+        <div class="pick__group">
+          <h2 class="label">Create</h2>
+          <div class="pick__row">
+            <div>
+              <h3 class="h3" id="sg-pick-CRE.1">Brand and creative development</h3>
+              <p class="small muted" id="sg-pick-CRE.1-intro">Campaign ideas, scripts, key visuals, video, and versions of creative.</p>
+            </div>
+            <div class="seg" role="radiogroup" aria-labelledby="sg-pick-CRE.1" aria-describedby="sg-pick-CRE.1-intro">
+              <label class="seg__item"><input type="radio" name="sg-pick-CRE.1" value="1"><span>I run this</span></label>
+              <label class="seg__item"><input type="radio" name="sg-pick-CRE.1" value="2" checked><span>I work in it every week</span></label>
+              <label class="seg__item"><input type="radio" name="sg-pick-CRE.1" value="3"><span>I know it well</span></label>
+              <label class="seg__item seg__item--optout"><input type="radio" name="sg-pick-CRE.1" value="4"><span>Not me</span></label>
+            </div>
+          </div>
+          <div class="pick__row">
+            <div>
+              <h3 class="h3" id="sg-pick-CRE.2">Content production</h3>
+              <p class="small muted" id="sg-pick-CRE.2-intro">Articles, copy for ads, emails and social, product descriptions, translation.</p>
+            </div>
+            <div class="seg" role="radiogroup" aria-labelledby="sg-pick-CRE.2" aria-describedby="sg-pick-CRE.2-intro">
+              <label class="seg__item"><input type="radio" name="sg-pick-CRE.2" value="1"><span>I run this</span></label>
+              <label class="seg__item"><input type="radio" name="sg-pick-CRE.2" value="2"><span>I work in it every week</span></label>
+              <label class="seg__item"><input type="radio" name="sg-pick-CRE.2" value="3"><span>I know it well</span></label>
+              <label class="seg__item seg__item--optout"><input type="radio" name="sg-pick-CRE.2" value="4" checked><span>Not me</span></label>
+            </div>
+          </div>
+          <div class="pick__row">
+            <div>
+              <h3 class="h3" id="sg-pick-CRE.3">Assets, approvals and brand governance</h3>
+              <p class="small muted" id="sg-pick-CRE.3-intro">Where assets live, usage rights, approvals, brand and legal checks, labelling AI-made content.</p>
+            </div>
+            <div class="seg" role="radiogroup" aria-labelledby="sg-pick-CRE.3" aria-describedby="sg-pick-CRE.3-intro">
+              <label class="seg__item"><input type="radio" name="sg-pick-CRE.3" value="1"><span>I run this</span></label>
+              <label class="seg__item"><input type="radio" name="sg-pick-CRE.3" value="2"><span>I work in it every week</span></label>
+              <label class="seg__item"><input type="radio" name="sg-pick-CRE.3" value="3"><span>I know it well</span></label>
+              <label class="seg__item seg__item--optout"><input type="radio" name="sg-pick-CRE.3" value="4"><span>Not me</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pick__bar">
+        <p role="status">Your survey: 1 section, about 16 minutes.</p>
+        <button class="btn btn--quiet" type="button">I can speak to all of it</button>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section>
     <h2 class="label">Rail</h2>
     <div class="rail">
       <div class="rail__group">
