@@ -1,0 +1,50 @@
+.shell { min-height: 100vh; display: flex; flex-direction: column; }
+.topbar { position: sticky; top: 0; z-index: 20; background: var(--paper); border-bottom: 1px solid var(--line); }
+.topbar__in { display: flex; align-items: center; justify-content: space-between; gap: var(--s-5); height: 64px; padding-inline: var(--gutter); }
+.topbar__meta { display: flex; align-items: center; gap: var(--s-5); font-size: 13px; color: var(--ink-2); }
+.topbar__saved::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 8px; background: var(--ink); vertical-align: 1px; }
+.topbar__menu { display: none; }
+.topbar .bar { display: none; }
+
+.shell__body { flex: 1; display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); }
+.shell__rail { position: sticky; top: 65px; align-self: start; height: calc(100vh - 65px); overflow: auto; padding: var(--s-7) var(--s-5) var(--s-7) var(--gutter); border-right: 1px solid var(--line); }
+.shell__main { min-width: 0; padding: var(--s-8) var(--gutter) var(--s-10) clamp(24px, 6vw, 96px); }
+
+.screen { max-width: 980px; }
+.screen__head { margin-bottom: var(--s-7); }
+.screen__head .label { display: block; margin-bottom: var(--s-3); }
+.screen__title:focus { outline: none; }
+.screen__lead { margin-top: var(--s-4); max-width: var(--measure); }
+.screen__nav { display: flex; align-items: center; gap: var(--s-4); margin-top: var(--s-8); padding-top: var(--s-5); border-top: 1px solid var(--line); }
+.screen__nav .error { margin-left: auto; }
+.screen-enter { animation: enter var(--dur) var(--ease); }
+@keyframes enter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.field.is-missing .field__label { color: var(--accent); }
+
+.rules { max-width: var(--measure); border-top: 1px solid var(--line); counter-reset: rule; }
+.rules li { display: grid; grid-template-columns: 48px 1fr; padding: var(--s-4) 0; border-bottom: 1px solid var(--line); counter-increment: rule; font-size: 18px; line-height: 1.45; }
+.rules li::before { content: counter(rule, decimal-leading-zero); padding-top: 5px; font-size: 11px; font-weight: 500; letter-spacing: .09em; color: var(--ink-2); }
+
+@media (max-width: 1023px) {
+  .shell__body { grid-template-columns: 1fr; }
+  .shell__rail { display: none; }
+  .shell__rail.is-open { display: block; position: fixed; inset: 65px 0 0 0; z-index: 15; height: auto; padding: var(--s-6) var(--gutter); border: 0; background: var(--paper); }
+  .topbar__menu { display: inline-flex; }
+  .topbar .bar { display: block; }
+  .topbar__saved { display: none; }
+  .shell__main { padding: var(--s-7) var(--gutter) var(--s-9); }
+}
+
+/* Beyond the plan's rules, each needed for behaviour the plan asks for:
+   .btn and .field set display, which would otherwise show elements marked hidden;
+   the navigation row wraps rather than squeezing its message on a phone;
+   the open rail drops the align-self it has in the grid, which would stop it reaching the bottom of the window;
+   an option waiting behind a limit of two looks unavailable, as a disabled button does. */
+[hidden] { display: none !important; }
+.screen__nav { flex-wrap: wrap; }
+.opt:has(.opt__input:disabled) { pointer-events: none; }
+.opt:has(.opt__input:disabled) > .opt__mark, .opt:has(.opt__input:disabled) > .opt__text { opacity: .3; }
+@media (max-width: 1023px) {
+  .shell__rail.is-open { align-self: auto; }
+}

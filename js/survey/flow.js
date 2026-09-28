@@ -64,30 +64,39 @@ export function visibleQuestions(instrument, screen, state) {
 }
 
 // True when the screen holds everything it needs for the person to move on.
-export function isScreenComplete(instrument, screen, state, { minPromptLength = 20 } = {}) {
+export function isScreenComplete(instrument, screen, state, options) {
+  return missing(instrument, screen, state, options).length === 0;
+}
+
+// The answer keys that still stop the screen from being complete, in the order they appear.
+export function missing(instrument, screen, state, { minPromptLength = 20 } = {}) {
   const answers = merged(state);
-  const at = (id) => answers[resolveKey(id, screen.scope)];
+  const key = (id) => resolveKey(id, screen.scope);
+  const unsettled = (keys) => keys.filter((k) => !isSettled(answers[k]));
   switch (screen.kind) {
     case 'welcome':
     case 'intro':
     case 'end':
-      return state.done[screen.id] === true;
+      return state.done[screen.id] === true ? [] : [screen.id];
     case 'questions':
-      return visibleQuestions(instrument, screen, state).every((question) => question.optional || answeredInFull(question, at(question.id)));
+      return visibleQuestions(instrument, screen, state)
+        .filter((question) => !question.optional && !answeredInFull(question, answers[key(question.id)]))
+        .map((question) => key(question.id));
     case 'screener':
-      return selectedSections(instrument, state).length > 0;
+      return selectedSections(instrument, state).length > 0 ? [] : [SCREENER];
     case 'jobs':
-      return getSection(instrument, screen.section).jobs.every((job) => jobDone(job, answers));
+      return getSection(instrument, screen.section).jobs.flatMap((job) => jobMissing(job, answers));
     case 'back':
-      return isSettled(at('STD.BACK')) && (!holds(PICKED_A_JOB, { answers, scope: screen.scope }) || isSettled(at('STD.BACK.b')));
+      if (!isSettled(answers[key('STD.BACK')])) return [key('STD.BACK')];
+      return holds(PICKED_A_JOB, { answers, scope: screen.scope }) ? unsettled([key('STD.BACK.b')]) : [];
     case 'result':
-      return isSettled(at('STD.RESULT'));
+      return unsettled([key('STD.RESULT')]);
     case 'prompt':
-      return !screen.required || longEnough(answers[screen.prompt], minPromptLength);
+      return (!screen.required || longEnough(answers[screen.prompt], minPromptLength)) ? [] : [screen.prompt];
     case 'tools':
-      return getSection(instrument, screen.section).tools.every((tool) => toolDone(`${screen.section}:${tool.id}`, answers));
+      return getSection(instrument, screen.section).tools.flatMap((tool) => toolMissing(`${screen.section}:${tool.id}`, answers));
     default:
-      return false;
+      return [screen.id];
   }
 }
 
@@ -245,16 +254,18 @@ function answeredInFull(question, value) {
   return true;
 }
 
-// How the job gets done, and the right amount of AI where how is 2 to 6.
-function jobDone(job, answers) {
+// How the job gets done, then the right amount of AI where how is 2 to 6.
+function jobMissing(job, answers) {
   const how = answers[`${job.id}:how`];
-  return isSettled(how) && (!FIT_ASKED.includes(how) || isSettled(answers[`${job.id}:fit`]));
+  if (!isSettled(how)) return [`${job.id}:how`];
+  return FIT_ASKED.includes(how) && !isSettled(answers[`${job.id}:fit`]) ? [`${job.id}:fit`] : [];
 }
 
-// An answer for the tool category, and the card questions when a tool was named.
-function toolDone(scope, answers) {
+// An answer for the tool category, then the card questions still open when a tool was named.
+function toolMissing(scope, answers) {
   const name = answers[`${scope}:name`];
-  return isSettled(name) && (name.kind !== 'tool' || CARD.every((id) => isSettled(answers[resolveKey(id, scope)])));
+  if (!isSettled(name)) return [`${scope}:name`];
+  return name.kind === 'tool' ? CARD.map((id) => resolveKey(id, scope)).filter((k) => !isSettled(answers[k])) : [];
 }
 
 function longEnough(text, min) {
