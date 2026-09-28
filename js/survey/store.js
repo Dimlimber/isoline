@@ -11,6 +11,8 @@ export function createStore(storage, { key = 'isoline.survey.v1', now = () => ne
   let state = null;
   // Whether the last write to storage worked; before any write, whether there is a storage to write to.
   let saved = typeof storage?.setItem === 'function';
+  // Whether this page's copy is known to be behind what is stored, because of what another tab did.
+  let behind = false;
   const listeners = new Set();
 
   const save = () => {
@@ -20,8 +22,22 @@ export function createStore(storage, { key = 'isoline.survey.v1', now = () => ne
   const notify = () => listeners.forEach((fn) => fn(state));
   // A state saved when only final sends were marked keeps its mark under final.
   const recorded = () => state?.lastSend ?? state?.final ?? null;
+  // Every change is made to what is stored now, not to this page's copy: another tab on the device may have stored
+  // newer answers since, and a whole copy written over them would undo them. When the stored state was removed
+  // elsewhere, or belongs to someone who started afresh there, this page is out of date and writes nothing.
+  // While storage takes no writes, the page's own copy is all there is, and the survey carries on from that.
   const change = (apply) => {
     if (!state) return;
+    if (saved) {
+      const stored = readState(storage, key);
+      if (stored?.respondent.id !== state.respondent.id) {
+        behind = true;
+        notify();
+        return;
+      }
+      if (stored.respondent.updated !== state.respondent.updated) behind = true;
+      state = stored;
+    }
     apply(state);
     state.respondent.updated = now();
     save();
@@ -36,6 +52,12 @@ export function createStore(storage, { key = 'isoline.survey.v1', now = () => ne
     // True while the answers are kept on this device: the last write to storage worked.
     get saved() {
       return saved;
+    },
+
+    // True once another tab has stored, removed or replaced answers that this page has not drawn.
+    // The page should then load afresh.
+    get behind() {
+      return behind;
     },
 
     // True when a usable state was found in storage; it then becomes the current state.

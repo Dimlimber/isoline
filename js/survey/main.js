@@ -24,6 +24,10 @@ function begin() {
   window.addEventListener('pageshow', (event) => {
     if (event.persisted) reloadIfChanged();
   });
+  // The store finds the same out for itself when it writes before the browser has told the page.
+  store.subscribe(() => {
+    if (store.behind) window.location.reload();
+  });
 }
 
 async function open() {
