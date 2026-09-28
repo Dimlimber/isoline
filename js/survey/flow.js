@@ -1,6 +1,7 @@
 // The ordered list of screens for one person, and when each screen is finished. Pure: no DOM, no storage.
 import { getQuestion, getSection, getModule } from './lookup.js';
 import { isSkipped, hasValue, isSettled, resolveKey, holds } from './conditions.js';
+import { FACT_KEYS } from './company.js';
 
 const SCREENER = 'CORE.14';
 const SPEAKS_TO = [1, 2, 3];
@@ -59,9 +60,10 @@ export function buildFlow(instrument, state, { maxQuestionsPerScreen = 4, requir
   return settlePrompts(instrument, screens, requiredPrompts, written);
 }
 
-// The question objects of a questions screen whose conditions hold now.
+// The question objects of a questions screen whose conditions hold now. On a screen marked asOwner, the questions
+// kept for whoever starts are asked of this person too.
 export function visibleQuestions(instrument, screen, state) {
-  const ctx = { answers: merged(state), owner: state.company.owner, scope: screen.scope };
+  const ctx = { answers: merged(state), owner: state.company.owner || screen.asOwner === true, scope: screen.scope };
   return screen.questions.map((id) => getQuestion(instrument, id)).filter((question) => holds(question.when, ctx));
 }
 
@@ -135,7 +137,7 @@ function endScreen() {
   return { id: 'end', kind: 'end', group: 'Finish', railKey: 'end', railLabel: 'Finish', title: TITLES.end, seconds: SECONDS.end };
 }
 
-// About you; the company profile for whoever starts; the self-screen; then the other core blocks.
+// About you; the company profile for whoever starts, or the facts a colleague lacks; the self-screen; then the other core blocks.
 function startScreens(instrument, state, max) {
   const named = (name) => instrument.core.find((block) => block.block === name);
   const you = named('About you');
@@ -144,7 +146,7 @@ function startScreens(instrument, state, max) {
   const rest = instrument.core.filter((block) => ![you, company, screener].includes(block));
   return [
     ...coreScreens(instrument, you, max),
-    ...(state.company.owner ? coreScreens(instrument, company, max) : []),
+    ...(state.company.owner ? coreScreens(instrument, company, max) : factScreens(instrument, company, state)),
     screenerScreen(instrument, screener),
     ...rest.flatMap((block) => coreScreens(instrument, block, max))
   ];
@@ -152,6 +154,16 @@ function startScreens(instrument, state, max) {
 
 function coreScreens(instrument, block, max) {
   return questionScreens(instrument, 'core', block, { group: 'Start', ...START_RAIL[block.block] }, max);
+}
+
+// A colleague whose invitation lacks some of the company facts, or who joined with the code alone, answers the missing
+// ones on one screen, in the order of the company profile. Those questions are kept for whoever starts, so the screen is
+// marked asOwner. It follows the facts the person was given, not their answers, so it stays while they answer.
+function factScreens(instrument, block, state) {
+  const questions = block.questions.filter((id) => FACT_KEYS.includes(id) && !hasValue(state.company.facts[id]));
+  if (questions.length === 0) return [];
+  const place = { group: 'Start', ...START_RAIL[block.block] };
+  return [{ id: 'core:company-facts:1', kind: 'questions', ...place, title: block.block, seconds: secondsOf(instrument, questions), questions, asOwner: true }];
 }
 
 function screenerScreen(instrument, block) {
