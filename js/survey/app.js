@@ -4,6 +4,7 @@ import { buildFlow, firstIncomplete, isScreenComplete, missing, railItems, railT
 import { createSubmitter } from './submit.js';
 import { createSending } from './sending.js';
 import { minutes, remainingSeconds } from './timing.js';
+import { firstControl, markPart } from './marks.js';
 import { frame } from './screens/frame.js';
 import * as welcome from './screens/welcome.js';
 import * as intro from './screens/intro.js';
@@ -176,21 +177,24 @@ export function createApp({ root, instrument, store, config }) {
     view.querySelector('.screen__title')?.focus({ preventScroll: true });
   }
 
-  // Marks each part of the screen that still stops it, says so in the navigation row, and brings the first into view.
-  // A part is anything that carries its answer key: a field, or a job's row or card. The first part brought into view
-  // is one that is drawn, since the jobs table and its cards carry the same keys and only one of them shows.
-  // A part taller than half the window is brought in from its top, so that its question or job shows.
+  // Marks each part of the screen that still stops it, says so in the navigation row, and brings the first into view
+  // with focus on its first control. A part is anything that carries its answer key: a field, a job's row or card, or a
+  // tool category. The jobs table and its cards carry the same keys and only one of them shows: both are marked, and
+  // focus goes to the one drawn. A part taller than half the window is brought in from its top, so its question shows.
   function showMissing(keys) {
     const parts = [...main.querySelectorAll('[data-key]')];
-    for (const part of parts) part.classList.toggle('is-missing', keys.includes(part.dataset.key));
+    for (const part of parts) markPart(part, keys.includes(part.dataset.key));
     const nav = main.querySelector('.screen__nav');
     nav.querySelector('.error')?.remove();
     nav.append(h('p', { class: 'error', role: 'alert' }, REFUSED[app.screen.kind] ?? REFUSED_OTHER));
     const first = parts.find((part) => keys.includes(part.dataset.key) && part.getClientRects().length > 0);
-    first?.scrollIntoView({ block: first.offsetHeight > window.innerHeight / 2 ? 'start' : 'center' });
+    if (!first) return;
+    firstControl(first)?.focus({ preventScroll: true });
+    first.scrollIntoView({ block: first.offsetHeight > window.innerHeight / 2 ? 'start' : 'center' });
   }
 
-  // After a refused Continue, each mark clears once its answer comes in, and the message goes once nothing is missing.
+  // After a refused Continue, each mark and its words clear once its answer comes in, and the message goes once nothing
+  // is missing.
   // New marks appear only when Continue is pressed.
   function clearMarks() {
     const marked = [...main.querySelectorAll('[data-key].is-missing')];
@@ -198,7 +202,7 @@ export function createApp({ root, instrument, store, config }) {
     if (marked.length === 0 && !message) return;
     const open = missing(instrument, app.screen, store.state, options);
     for (const part of marked) {
-      if (!open.includes(part.dataset.key)) part.classList.remove('is-missing');
+      if (!open.includes(part.dataset.key)) markPart(part, false);
     }
     if (open.length === 0) message?.remove();
   }

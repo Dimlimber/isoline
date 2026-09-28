@@ -22,6 +22,12 @@
 @keyframes enter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
 .field.is-missing .field__label { color: var(--accent); }
+/* The words under a marked part's label, legend, job name or tool question. A tool category's question sits in a row
+   of its own, so its words take a line of their own under it. */
+[data-key] .error { margin-top: var(--s-1); }
+.gridq__sub .error { margin-bottom: var(--s-2); }
+.card__head { flex-wrap: wrap; row-gap: 0; }
+.card__head > .error { flex-basis: 100%; }
 
 .rules { max-width: var(--measure); border-top: 1px solid var(--line); counter-reset: rule; }
 .rules li { display: grid; grid-template-columns: 48px 1fr; padding: var(--s-4) 0; border-bottom: 1px solid var(--line); counter-increment: rule; font-size: 18px; line-height: 1.45; }
