@@ -5,6 +5,7 @@ import { createSubmitter } from './submit.js';
 import { createSending } from './sending.js';
 import { minutes, remainingSeconds } from './timing.js';
 import { firstControl, markPart } from './marks.js';
+import { writeWaiting } from './fields/field.js';
 import { frame } from './screens/frame.js';
 import * as welcome from './screens/welcome.js';
 import * as intro from './screens/intro.js';
@@ -102,6 +103,7 @@ export function createApp({ root, instrument, store, config }) {
 
   // Does the work the screen in view handed over. It may change answers, so it comes before anything reads them.
   function leave() {
+    writeWaiting();
     for (const fn of leaving) fn();
   }
 

@@ -90,18 +90,21 @@ export function onTyping(control, write) {
   };
 }
 
-// Holds a save that waits. The page's listener is added the first time one does. A field no longer on the page when
-// the page is hidden drops out without writing, since its screen has gone.
+// Holds a save that waits. The page's listener is added the first time one does.
 function wait(control, flush) {
   waiting.set(control, flush);
   if (listening) return;
   listening = true;
-  window.addEventListener('pagehide', () => {
-    for (const [held, write] of [...waiting]) {
-      if (held.isConnected) write();
-      else waiting.delete(held);
-    }
-  });
+  window.addEventListener('pagehide', writeWaiting);
+}
+
+// Writes every save that waits, at once: when the page is hidden, and before a screen is left, so that Continue never
+// depends on a box having lost focus. A field no longer on the page drops out without writing, since its screen has gone.
+export function writeWaiting() {
+  for (const [held, write] of [...waiting]) {
+    if (held.isConnected) write();
+    else waiting.delete(held);
+  }
 }
 
 // True when a list of options is long enough to take two columns on a wide screen.
