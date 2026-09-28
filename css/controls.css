@@ -27,6 +27,8 @@
 .opt__input:checked + .opt__mark::after { transform: scale(1); }
 .opt:has(.opt__input:checked) { border-color: var(--ink); z-index: 2; }
 .opt:has(.opt__input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; z-index: 3; }
+.opt:has(.opt__input:disabled) { pointer-events: none; }
+.opt:has(.opt__input:disabled) > .opt__mark, .opt:has(.opt__input:disabled) > .opt__text { opacity: .3; }
 .opt__text { font-size: 16px; line-height: 1.4; }
 .opt--optout { margin-top: var(--s-3); background: transparent; }
 .opt--optout + .opt--optout { margin-top: -1px; }

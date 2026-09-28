@@ -39,11 +39,8 @@
 /* Beyond the plan's rules, each needed for behaviour the plan asks for:
    .btn and .field set display, which would otherwise show elements marked hidden;
    the navigation row wraps rather than squeezing its message on a phone;
-   the open rail drops the align-self it has in the grid, which would stop it reaching the bottom of the window;
-   an option waiting behind a limit of two looks unavailable, as a disabled button does. */
+   the open rail drops the align-self it has in the grid, which would stop it reaching the bottom of the window. */
 .screen__nav { flex-wrap: wrap; }
-.opt:has(.opt__input:disabled) { pointer-events: none; }
-.opt:has(.opt__input:disabled) > .opt__mark, .opt:has(.opt__input:disabled) > .opt__text { opacity: .3; }
 @media (max-width: 1023px) {
   .shell__rail.is-open { align-self: auto; }
 }
