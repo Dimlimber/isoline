@@ -76,15 +76,13 @@
 
 /* Beyond the brief's rules for Task 4, each needed for what its fields showed in the browser:
    rank rows are buttons, so their text lines up as in the other rows, a chosen row is outlined as a chosen option is,
-   focus shows above the neighbouring rows, and rows waiting behind the limit of two look unavailable;
+   and focus shows above the neighbouring rows;
    a segment that wraps keeps single hairlines and a straight left edge;
    while the rail takes its width, a self-screen row stacks until it is wide enough for its two columns;
    the choice of the main one holds whole option texts, which on a narrow screen take a line each and wrap. */
 button.opt { text-align: left; }
 .opt[aria-pressed="true"] { border-color: var(--ink); z-index: 2; }
 .opt:focus-visible { z-index: 3; }
-button.opt:disabled { pointer-events: none; }
-button.opt:disabled > .opt__mark, button.opt:disabled > .opt__text { opacity: .3; }
 .seg { padding: 1px 0 0 1px; }
 .seg__item, .seg__item:first-child { margin: -1px 0 0 -1px; }
 @media (min-width: 1024px) and (max-width: 1199px) {
@@ -159,11 +157,9 @@ button.opt:disabled > .opt__mark, button.opt:disabled > .opt__text { opacity: .3
 /* Beyond the brief's rules for Task 6, each needed for what the tools screen showed in the browser:
    a card whose list is open sits above the next card, which a missing mark would otherwise raise over the list;
    the note about the first name keeps the same space from the first question as the label keeps from it;
-   the box, closed once five names are listed, looks unavailable, as a disabled button does;
    on a phone, a choice too long for the width wraps inside its segment, and the segments stack as the main-one choice does. */
 .tool:has(.ta__list:not([hidden])) { position: relative; z-index: 2; }
 .tool__more > .note { margin-bottom: var(--s-5); }
-.ta .input:disabled { opacity: .3; pointer-events: none; }
 @media (max-width: 640px) {
   .tool__more .seg__item { flex-basis: 100%; min-width: 0; }
   .tool__more .seg__item span { height: auto; min-height: 44px; padding-block: 10px; white-space: normal; text-align: center; }

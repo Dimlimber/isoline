@@ -31,6 +31,8 @@
 .opt:has(.opt__input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; z-index: 3; }
 .opt:has(.opt__input:disabled) { pointer-events: none; }
 .opt:has(.opt__input:disabled) > .opt__mark, .opt:has(.opt__input:disabled) > .opt__text { opacity: .3; }
+button.opt:disabled { pointer-events: none; }
+button.opt:disabled > .opt__mark, button.opt:disabled > .opt__text { opacity: .3; }
 .opt__text { font-size: 16px; line-height: 1.4; }
 .opt--optout { margin-top: var(--s-3); background: transparent; }
 .opt--optout + .opt--optout { margin-top: -1px; }
@@ -136,6 +138,7 @@ button.rail__item:hover { color: var(--ink); }
 .ta__opt { padding: 10px 14px; font-size: 15px; cursor: pointer; }
 .ta__opt:hover { background: var(--paper); }
 .ta__opt[aria-selected="true"] { background: var(--ink); color: var(--paper); }
+.ta .input:disabled { opacity: .3; pointer-events: none; }
 
 @media (max-width: 640px) {
   .field__label { font-size: 18px; }
