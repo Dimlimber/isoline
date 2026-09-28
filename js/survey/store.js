@@ -1,5 +1,6 @@
 // One person's survey state and its persistence. Pure: the storage is passed in.
 import { ALPHABET, isPlainObject, normalizeCode } from './company.js';
+import { hasValue } from './conditions.js';
 
 const ID_LENGTH = 10;
 const FNV_OFFSET = 0x811c9dc5;
@@ -47,6 +48,20 @@ export function createStore(storage, { key = 'isoline.survey.v1', now = () => ne
       };
       save();
       notify();
+    },
+
+    // Takes from an invitation for the same company what the saved company lacks: every fact it has no value for,
+    // and the name when its own is empty. Nothing is written when nothing is missing.
+    adopt({ name, facts }) {
+      if (!state) return;
+      const { company } = state;
+      const added = Object.entries(facts).filter(([key, value]) => !hasValue(company.facts[key]) && hasValue(value));
+      const named = company.name.trim() === '' && name.trim() !== '';
+      if (added.length === 0 && !named) return;
+      change((s) => {
+        s.company.facts = { ...s.company.facts, ...Object.fromEntries(added) };
+        if (named) s.company.name = name;
+      });
     },
 
     // The answer at this key, or undefined.

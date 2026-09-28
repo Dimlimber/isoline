@@ -17,10 +17,13 @@ window.addEventListener('pageshow', (event) => {
 });
 
 // What the page offers follows from the answers saved on this device and the invitation in the link.
+// A link for the company saved here hands over the facts and the name the saved company lacks, then offers to continue.
 function render() {
   const invite = decodeInvite(window.location.hash);
   const saved = store.load() ? store.state : null;
-  if (saved && (!invite || invite.code === saved.company.code)) show(continuePanel(saved));
+  const same = saved !== null && invite !== null && invite.code === saved.company.code;
+  if (same) store.adopt(invite);
+  if (saved && (!invite || same)) show(continuePanel(store.state));
   else if (invite) show(invitedPanel(invite, saved));
   else showStart();
 }
