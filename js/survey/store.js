@@ -90,7 +90,10 @@ export function createStore(storage, { key = 'isoline.survey.v1', now = () => ne
       change((s) => { delete s.answers[answerKey]; });
     },
 
+    // The screen in view. The same screen again writes nothing, so a page that opens where it was left changes nothing
+    // that another tab would have to reload for.
     setPosition(screenId) {
+      if (state?.position === screenId) return;
       change((s) => { s.position = screenId; });
     },
 
