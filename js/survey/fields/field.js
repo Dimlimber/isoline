@@ -13,22 +13,24 @@ export function idFor(key) {
 }
 
 // The label, help, body and skip control around any field; body is one element. A question with options is a group
-// named by its legend; any other question's label names the first input or textarea in the body.
+// named by its legend; any other question's label names the first input or textarea in the body. The skip control is
+// described by the question, so each one says which question it skips, and says whether it is pressed.
 // help replaces the question's own help. clear empties the field's controls when the person skips it.
 export function fieldShell(question, ctx, body, { help, wide = false, clear } = {}) {
   const { app, key } = ctx;
   const required = ctx.required ?? !question.optional;
   const helpText = help ?? question.help ?? (required ? null : 'Optional.');
   const helpId = helpText ? `${idFor(key)}-help` : null;
-  const skip = required ? h('button', { class: 'btn btn--quiet', type: 'button', onClick: toggle }) : null;
+  const titleId = `${idFor(key)}-title`;
+  const skip = required ? h('button', { class: 'btn btn--quiet', type: 'button', 'aria-describedby': titleId, onClick: toggle }) : null;
   const parts = [
     helpText ? h('p', { class: 'field__help', id: helpId }, helpText) : null,
     h('div', { class: 'field__body' }, body),
     skip ? h('div', { class: 'field__foot' }, skip) : null
   ];
   const content = question.options
-    ? h('fieldset', { 'aria-describedby': helpId }, h('legend', { class: 'field__label' }, question.text), parts)
-    : [h('label', { class: 'field__label', for: nameControl(body, key, helpId) }, question.text), parts];
+    ? h('fieldset', { 'aria-describedby': helpId }, h('legend', { class: 'field__label', id: titleId }, question.text), parts)
+    : [h('label', { class: 'field__label', id: titleId, for: nameControl(body, key, helpId) }, question.text), parts];
   const el = h('div', { class: wide ? 'field field--wide' : 'field', 'data-key': key }, content);
   showSkipped(el, isSkipped(app.store.get(key)));
   return el;
@@ -180,9 +182,11 @@ function nameControl(body, key, helpId) {
   return control.id;
 }
 
-// Shows whether the field is skipped: the class, and the words on its skip control.
+// Shows whether the field is skipped: the class, and the words and pressed state of its skip control.
 function showSkipped(el, skipped) {
   el.classList.toggle('is-skipped', skipped);
   const button = el.querySelector('.field__foot > .btn');
-  if (button) button.textContent = skipped ? 'Answer this question' : 'Skip this question';
+  if (!button) return;
+  button.textContent = skipped ? 'Answer this question' : 'Skip this question';
+  button.setAttribute('aria-pressed', String(skipped));
 }
