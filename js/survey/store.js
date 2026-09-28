@@ -38,6 +38,7 @@ export function createStore(storage, { key = 'isoline.survey.v1', now = () => ne
       state = {
         v: 1,
         instrument: instrumentVersion,
+        instruments: instrumentVersion ? [instrumentVersion] : [],
         company: { code, name, owner, facts },
         respondent: { id: respondentId(random), started: at, updated: at },
         answers: {},
@@ -69,11 +70,17 @@ export function createStore(storage, { key = 'isoline.survey.v1', now = () => ne
       change((s) => { s.done[screenId] = true; });
     },
 
-    // Records which version of the instrument the answers were given against.
-    // The same version again writes nothing, so opening the survey does not move the updated time.
+    // Records that the answers were opened under this version of the instrument. instrument keeps the first version
+    // they were opened under and never changes after that; instruments lists every version, in order, once each.
+    // A version already recorded writes nothing, so opening the survey does not move the updated time.
     setInstrument(version) {
-      if (state?.instrument === version) return;
-      change((s) => { s.instrument = version; });
+      if (!state || (state.instrument && Array.isArray(state.instruments) && state.instruments.includes(version))) return;
+      // A state saved before the list existed starts it from the version it holds.
+      const seen = Array.isArray(state.instruments) ? state.instruments : [state.instrument].filter(Boolean);
+      change((s) => {
+        s.instrument = s.instrument || version;
+        s.instruments = seen.includes(version) ? [...seen] : [...seen, version];
+      });
     },
 
     // True when the screen was marked done.
@@ -110,6 +117,7 @@ export function createStore(storage, { key = 'isoline.survey.v1', now = () => ne
       return {
         v: state.v,
         instrument: state.instrument,
+        instruments: Array.isArray(state.instruments) ? [...state.instruments] : [],
         company: { code: state.company.code, name: state.company.name },
         respondent: { ...state.respondent },
         answers: { ...state.answers },
